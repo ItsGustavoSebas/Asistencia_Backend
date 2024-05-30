@@ -23,5 +23,6 @@ public class ReqRes {
     private String role;
     private String password;
     private List<Product> products;
+    private List<OurUsers> ourUsersList;
     private OurUsers ourUsers;
 }
