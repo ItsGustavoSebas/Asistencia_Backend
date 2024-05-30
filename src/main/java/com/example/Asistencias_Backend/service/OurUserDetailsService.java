@@ -1,6 +1,7 @@
 package com.example.Asistencias_Backend.service;
 
-import com.example.Asistencias_Backend.repository.OurUserRepo;
+
+import com.example.Asistencias_Backend.repository.UsersRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -11,9 +12,9 @@ import org.springframework.stereotype.Service;
 public class OurUserDetailsService implements UserDetailsService {
 
     @Autowired
-    private OurUserRepo ourUserRepo;
+    private UsersRepo usersRepo;
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        return ourUserRepo.findByEmail(username).orElseThrow();
+        return usersRepo.findByEmail(username).orElseThrow();
     }
 }

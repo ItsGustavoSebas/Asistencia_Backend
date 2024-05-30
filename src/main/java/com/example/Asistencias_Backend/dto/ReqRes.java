@@ -1,7 +1,7 @@
 package com.example.Asistencias_Backend.dto;
 
 import com.example.Asistencias_Backend.entity.OurUsers;
-import com.example.Asistencias_Backend.entity.Product;
+import com.example.Asistencias_Backend.entity.Role;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Data;
@@ -9,9 +9,10 @@ import lombok.Data;
 import java.util.List;
 
 @Data
-@JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class ReqRes {
+
     private int statusCode;
     private String error;
     private String message;
@@ -19,9 +20,14 @@ public class ReqRes {
     private String refreshToken;
     private String expirationTime;
     private String name;
-    private String email;
+    private String city;
+    private List<String> roles;
+    private List<String> permissions;
     private String role;
+    private String email;
     private String password;
-    private List<Product> products;
     private OurUsers ourUsers;
+    private List<OurUsers> ourUsersList;
+    private List<Role> roleList;
+    private Integer cargoId;
 }
