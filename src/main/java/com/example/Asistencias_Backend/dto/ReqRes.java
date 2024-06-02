@@ -25,11 +25,6 @@ public class ReqRes {
     private List<String> permissions;
     private String email;
     private String password;
-<<<<<<< HEAD
-=======
-    private List<Product> products;
-    private List<OurUsers> ourUsersList;
->>>>>>> origin/main
     private OurUsers ourUsers;
     private List<OurUsers> ourUsersList;
     private List<Role> roleList;
