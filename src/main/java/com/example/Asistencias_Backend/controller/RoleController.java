@@ -1,6 +1,8 @@
 package com.example.Asistencias_Backend.controller;
 
+import com.example.Asistencias_Backend.dto.ReqRes;
 import com.example.Asistencias_Backend.entity.Role;
+import com.example.Asistencias_Backend.repository.RoleRepo;
 import com.example.Asistencias_Backend.service.RoleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -16,9 +18,9 @@ public class RoleController {
     private RoleService roleService;
 
     @PutMapping("/{roleId}/permissions")
-    public ResponseEntity<String> updateRolePermissions(@PathVariable int roleId, @RequestBody List<Integer> permissionIds) {
-        roleService.updateRolePermissions(roleId, permissionIds);
-        return ResponseEntity.ok("Permissions updated successfully for role with ID: " + roleId);
+    public ResponseEntity<ReqRes> updateRolePermissions(@PathVariable int roleId, @RequestBody List<Integer> permissionIds) {
+        return ResponseEntity.ok(roleService.updateRolePermissions(roleId, permissionIds));
+
     }
 
     @GetMapping("/{roleId}")

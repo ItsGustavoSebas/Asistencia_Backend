@@ -23,11 +23,16 @@ public class ReqRes {
     private String city;
     private List<String> roles;
     private List<String> permissions;
-    private String role;
     private String email;
     private String password;
+<<<<<<< HEAD
+=======
+    private List<Product> products;
+    private List<OurUsers> ourUsersList;
+>>>>>>> origin/main
     private OurUsers ourUsers;
     private List<OurUsers> ourUsersList;
     private List<Role> roleList;
     private Integer cargoId;
+    private Role role;
 }

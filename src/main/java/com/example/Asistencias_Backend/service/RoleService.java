@@ -1,5 +1,6 @@
 package com.example.Asistencias_Backend.service;
 
+import com.example.Asistencias_Backend.dto.ReqRes;
 import com.example.Asistencias_Backend.entity.Permission;
 import com.example.Asistencias_Backend.entity.Role;
 import com.example.Asistencias_Backend.repository.PermissionRepo;
@@ -21,20 +22,31 @@ public class RoleService {
     private PermissionRepo permissionRepository;
 
     @Transactional
-    public void updateRolePermissions(int roleId, List<Integer> permissionIds) {
-        Role role = roleRepository.findById(roleId).orElseThrow(() -> new RuntimeException("Role not found"));
+    public ReqRes updateRolePermissions(int roleId, List<Integer> permissionIds) {
+        ReqRes reqRes = new ReqRes();
+        try {
+            Role role = roleRepository.findById(roleId)
+                    .orElseThrow(() -> new RuntimeException("Role not found"));
 
-        // Eliminar todos los permisos existentes del rol
-        role.getPermissions().clear();
+            // Eliminar todos los permisos existentes del rol
+            role.getPermissions().clear();
 
-        // Añadir los nuevos permisos a partir de los IDs recibidos
-        List<Permission> permissions = permissionIds.stream()
-                .map(permissionId -> permissionRepository.findById(permissionId)
-                        .orElseThrow(() -> new RuntimeException("Permission not found with ID: " + permissionId)))
-                .collect(Collectors.toList());
-        role.getPermissions().addAll(permissions);
+            // Añadir los nuevos permisos a partir de los IDs recibidos
+            List<Permission> permissions = permissionIds.stream()
+                    .map(permissionId -> permissionRepository.findById(permissionId)
+                            .orElseThrow(() -> new RuntimeException("Permission not found with ID: " + permissionId)))
+                    .collect(Collectors.toList());
+            role.getPermissions().addAll(permissions);
 
-        roleRepository.save(role);
+            Role savedRole = roleRepository.save(role);
+            reqRes.setRole(savedRole);
+            reqRes.setStatusCode(200);
+            reqRes.setMessage("Permissions updated successfully for role with ID: " + roleId);
+        } catch (Exception e) {
+            reqRes.setStatusCode(500);
+            reqRes.setMessage("Error occurred while updating permissions for role: " + e.getMessage());
+        }
+        return reqRes;
     }
 
     public Role getRole(int roleId) {
