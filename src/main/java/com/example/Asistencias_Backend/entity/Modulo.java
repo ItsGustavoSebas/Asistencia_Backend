@@ -12,14 +12,15 @@ public class Modulo {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    private int id;
     private String name;
     private double latitud;
     private double longitud;
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.REMOVE)
     @JoinColumn(name = "facultad_id")
     private Facultad facultad;
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "modulo")
     private List<Aula> aulas;
+
 
 }

@@ -92,7 +92,8 @@ public class ModuloSeeder implements CommandLineRunner, Ordered {
         aula12.setName("Aula 16");
         aula12.setModulo(modulo2);
 
-        modulo1.setAulas(Arrays.asList(aula7, aula8, aula9, aula10, aula11, aula12));
+        modulo2.setAulas(Arrays.asList(aula7, aula8, aula9, aula10, aula11, aula12));
+
         moduloRepo.save(modulo2);
 
     }

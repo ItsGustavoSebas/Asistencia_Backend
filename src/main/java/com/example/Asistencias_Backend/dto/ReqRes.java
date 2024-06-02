@@ -1,7 +1,6 @@
 package com.example.Asistencias_Backend.dto;
 
-import com.example.Asistencias_Backend.entity.OurUsers;
-import com.example.Asistencias_Backend.entity.Role;
+import com.example.Asistencias_Backend.entity.*;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Data;
@@ -30,4 +29,30 @@ public class ReqRes {
     private List<Role> roleList;
     private Integer cargoId;
     private Role role;
+    private Materia materia;
+    private List<Materia> materiaList;
+    private Facultad facultad;
+    private List<Facultad> facultadList;
+    private Carrera carrera;
+    private List<Carrera> carreraList;
+    private List<MateriaSemestre> materias;
+    private Modulo modulo;
+    private Double latitud;
+    private Double longitud;
+    private List<String> aulaNames;
+    private String sigla;
+    public static class MateriaSemestre {
+        private int materiaId;
+        private int semestre;
+
+        // Getters y setters
+        public int getMateriaId() {
+            return materiaId;
+        }
+
+        public int getSemestre() {
+            return semestre;
+        }
+    }
+
 }

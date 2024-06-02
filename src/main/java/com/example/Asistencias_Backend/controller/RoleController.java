@@ -2,7 +2,6 @@ package com.example.Asistencias_Backend.controller;
 
 import com.example.Asistencias_Backend.dto.ReqRes;
 import com.example.Asistencias_Backend.entity.Role;
-import com.example.Asistencias_Backend.repository.RoleRepo;
 import com.example.Asistencias_Backend.service.RoleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;

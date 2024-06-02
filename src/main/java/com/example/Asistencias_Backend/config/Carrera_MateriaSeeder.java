@@ -4,6 +4,7 @@ import com.example.Asistencias_Backend.entity.Carrera;
 import com.example.Asistencias_Backend.entity.Materia;
 import com.example.Asistencias_Backend.entity.Materia_Carrera;
 import com.example.Asistencias_Backend.repository.CarreraRepo;
+import com.example.Asistencias_Backend.repository.FacultadRepo;
 import com.example.Asistencias_Backend.repository.MateriaRepo;
 import com.example.Asistencias_Backend.repository.Materia_CarreraRepo;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,9 +17,12 @@ import org.springframework.stereotype.Component;
 @DependsOn({"FacultadSeeder"})
 public class Carrera_MateriaSeeder implements CommandLineRunner, Ordered {
 
+    @Autowired
+    private FacultadRepo facultadRepo;
+
     @Override
     public int getOrder() {
-        return 3; // Establece un orden posterior al de FacultadSeeder
+        return 3;
     }
 
     @Autowired
@@ -31,16 +35,20 @@ public class Carrera_MateriaSeeder implements CommandLineRunner, Ordered {
     @Override
     public void run(String... args) throws Exception {
         Materia materia1 = new Materia();
+        materia1.setSigla("MAT101");
         materia1.setName("Calculo 1");
 
         Carrera carrera1 = new Carrera();
         carrera1.setName("Ingenieria en Sistemas");
+        carrera1.setFacultad(facultadRepo.findById(1).orElse(null));
 
         Carrera carrera2 = new Carrera();
-        carrera1.setName("Ingenieria Informatica");
+        carrera2.setName("Ingenieria Informatica");
+        carrera2.setFacultad(facultadRepo.findById(1).orElse(null));
 
         Carrera carrera3 = new Carrera();
-        carrera1.setName("Ingenieria en Redes y Telecomunicaciones");
+        carrera3.setName("Ingenieria en Redes y Telecomunicaciones");
+        carrera3.setFacultad(facultadRepo.findById(1).orElse(null));
 
         Materia_Carrera materiaCarrera1 = new Materia_Carrera();
         materiaCarrera1.setSemestre(1);
@@ -58,7 +66,8 @@ public class Carrera_MateriaSeeder implements CommandLineRunner, Ordered {
         materiaCarrera3.setCarrera(carrera3);
 
         Materia materia2 = new Materia();
-        materia1.setName("Introduccion a la Informatica");
+        materia2.setSigla("INF110");
+        materia2.setName("Introduccion a la Informatica");
 
         Materia_Carrera materiaCarrera4 = new Materia_Carrera();
         materiaCarrera4.setSemestre(1);

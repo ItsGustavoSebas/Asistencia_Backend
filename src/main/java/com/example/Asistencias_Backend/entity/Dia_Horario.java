@@ -10,7 +10,7 @@ public class Dia_Horario {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    private int id;
     private String name;
     @ManyToOne
     @JoinColumn(name = "dia_id")

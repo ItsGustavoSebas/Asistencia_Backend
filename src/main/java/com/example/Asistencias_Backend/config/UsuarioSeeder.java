@@ -6,6 +6,7 @@ import com.example.Asistencias_Backend.entity.Role;
 import com.example.Asistencias_Backend.repository.CargoRepo;
 import com.example.Asistencias_Backend.repository.RoleRepo;
 import com.example.Asistencias_Backend.repository.UsersRepo;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.DependsOn;
@@ -38,8 +39,8 @@ public class UsuarioSeeder implements CommandLineRunner, Ordered {
     private CargoRepo cargoRepo;
 
     @Override
+    @Transactional
     public void run(String... args) throws Exception {
-        // Asegúrate de que los roles estén gestionados por el contexto de persistencia
         Role role1 = rolRepository.findById(1).orElseThrow(() -> new RuntimeException("Role not found"));
         Role role2 = rolRepository.findById(2).orElseThrow(() -> new RuntimeException("Role not found"));
 
