@@ -8,6 +8,7 @@ import com.example.Asistencias_Backend.entity.Role;
 import com.example.Asistencias_Backend.repository.CargoRepo;
 import com.example.Asistencias_Backend.repository.RoleRepo;
 import com.example.Asistencias_Backend.repository.UsersRepo;
+import org.apache.catalina.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -105,10 +106,6 @@ public class UsersManagementService {
         }
         return response;
     }
-
-
-
-
 
     public ReqRes refreshToken(ReqRes refreshTokenReqiest){
         ReqRes response = new ReqRes();
@@ -248,5 +245,68 @@ public class UsersManagementService {
         }
         return reqRes;
 
+    }
+
+    public ReqRes getUsersByRole(String role) {
+        ReqRes reqRes = new ReqRes();
+
+        try {
+            List<OurUsers> result = usersRepo.findByRoles_Name(role);
+            if (!result.isEmpty()) {
+                reqRes.setOurUsersList(result);
+                reqRes.setStatusCode(200);
+                reqRes.setMessage("Successful");
+            } else {
+                reqRes.setStatusCode(404);
+                reqRes.setMessage("No users found");
+            }
+            return reqRes;
+        } catch (Exception e) {
+            reqRes.setStatusCode(500);
+            reqRes.setMessage("Error occurred: " + e.getMessage());
+            return reqRes;
+        }
+    }
+
+    public ReqRes searchUsersByName(String name) {
+        ReqRes reqRes = new ReqRes();
+
+        try {
+            List<OurUsers> result = usersRepo.findByNameContainingIgnoreCase(name);
+            if (!result.isEmpty()) {
+                reqRes.setOurUsersList(result);
+                reqRes.setStatusCode(200);
+                reqRes.setMessage("Successful");
+            } else {
+                reqRes.setStatusCode(404);
+                reqRes.setMessage("No users found");
+            }
+            return reqRes;
+        } catch (Exception e) {
+            reqRes.setStatusCode(500);
+            reqRes.setMessage("Error occurred: " + e.getMessage());
+            return reqRes;
+        }
+    }
+
+    public ReqRes getUsersByRoleAndName(String role, String name) {
+        ReqRes reqRes = new ReqRes();
+
+        try {
+            List<OurUsers> result = usersRepo.findByRoles_NameAndNameContainingIgnoreCase(role, name);
+            if (!result.isEmpty()) {
+                reqRes.setOurUsersList(result);
+                reqRes.setStatusCode(200);
+                reqRes.setMessage("Successful");
+            } else {
+                reqRes.setStatusCode(404);
+                reqRes.setMessage("No users found");
+            }
+            return reqRes;
+        } catch (Exception e) {
+            reqRes.setStatusCode(500);
+            reqRes.setMessage("Error occurred: " + e.getMessage());
+            return reqRes;
+        }
     }
 }

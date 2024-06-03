@@ -35,6 +35,8 @@ public class ModuloSeeder implements CommandLineRunner, Ordered {
 
         Modulo modulo1 = new Modulo();
         modulo1.setName("Modulo 236");
+        modulo1.setLatitud(-17.776254436687648);
+        modulo1.setLongitud(-63.19507196545601);
         modulo1.setFacultad(facultadRepo.getById(1));
 
         Aula aula1 = new Aula();
@@ -66,6 +68,8 @@ public class ModuloSeeder implements CommandLineRunner, Ordered {
 
         Modulo modulo2 = new Modulo();
         modulo2.setName("Modulo 225");
+        modulo2.setLongitud(-63.194475173950195);
+        modulo2.setLatitud(-17.775433275693377);
         modulo2.setFacultad(facultadRepo.getById(2));
 
         Aula aula7 = new Aula();

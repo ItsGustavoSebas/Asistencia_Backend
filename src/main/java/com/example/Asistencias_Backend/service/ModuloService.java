@@ -44,13 +44,11 @@ public class ModuloService {
                 for (String aulaName : newAulaNames) {
                     boolean aulaAlreadyExists = currentAulas.stream().anyMatch(aula -> aula.getName().equals(aulaName));
                     if (!aulaAlreadyExists) {
-                        Aula aula = aulaRepo.findByName(aulaName);
-                        if (aula == null) {
-                            aula = new Aula();
-                            aula.setName(aulaName);
-                            aula.setModulo(existingModulo);
-                            aula = aulaRepo.save(aula);
-                        }
+                        // Create a new Aula for the current Modulo
+                        Aula aula = new Aula();
+                        aula.setName(aulaName);
+                        aula.setModulo(existingModulo);
+                        aula = aulaRepo.save(aula);
                         currentAulas.add(aula);
                     }
                 }
@@ -70,6 +68,7 @@ public class ModuloService {
         }
         return reqRes;
     }
+
 
 
 

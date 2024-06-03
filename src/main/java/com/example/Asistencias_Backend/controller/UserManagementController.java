@@ -61,5 +61,28 @@ public class UserManagementController {
         return ResponseEntity.ok(usersManagementService.deleteUser(userId));
     }
 
+    @GetMapping("/admin/get-users-roles/{role}")
+    public ResponseEntity<ReqRes> getUsersByRole(@PathVariable String role){
+        ReqRes users = usersManagementService.getUsersByRole(role);
+        return ResponseEntity.ok(users);
+
+    }
+
+    @GetMapping("/admin/get-users-names")
+    public ResponseEntity<ReqRes> getUsersByName(@RequestParam String name){
+        ReqRes users = usersManagementService.searchUsersByName(name);
+        return ResponseEntity.ok(users);
+
+    }
+
+    @GetMapping("/admin/get-users-roles-names")
+    public ResponseEntity<ReqRes> getUsersByRoleAndName(@RequestParam String role, @RequestParam String name){
+        ReqRes users = usersManagementService.getUsersByRoleAndName(role, name);
+        return ResponseEntity.ok(users);
+
+    }
+
+
+
 
 }
