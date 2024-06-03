@@ -13,10 +13,7 @@ import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -39,24 +36,51 @@ public class CarreraService {
                 Carrera existingCarrera = carreraOptional.get();
                 existingCarrera.setName(reqRes.getName());
                 existingCarrera.setFacultad(facultadRepo.findById(reqRes.getFacultad().getId()).orElse(null));
+
+                // Remove existing Materia_Carrera associations not in the new list
                 List<Materia_Carrera> existingMateriaCarreras = materia_CarreraRepo.findByCarrera(existingCarrera);
-                Map<Integer, Materia_Carrera> existingMateriaMap = existingMateriaCarreras.stream()
-                        .collect(Collectors.toMap(mc -> mc.getMateria().getId(), mc -> mc));
+                Set<Integer> newMateriaIds = reqRes.getMaterias().stream()
+                        .map(ReqRes.MateriaSemestre::getMateriaId)
+                        .collect(Collectors.toSet());
+
+                for (Materia_Carrera existingMateriaCarrera : existingMateriaCarreras) {
+                    if (!newMateriaIds.contains(existingMateriaCarrera.getMateria().getId())) {
+                        materia_CarreraRepo.delete(existingMateriaCarrera);
+                    }
+                }
+
+                // Create new Materia_Carrera associations
                 List<Materia_Carrera> newMateriaCarreras = new ArrayList<>();
                 for (ReqRes.MateriaSemestre materiaSemestre : reqRes.getMaterias()) {
                     int materiaId = materiaSemestre.getMateriaId();
                     int semestre = materiaSemestre.getSemestre();
-                    if (!existingMateriaMap.containsKey(materiaId)) {
-                        Materia materia = materiaRepo.findById(materiaId)
-                                .orElseThrow(() -> new RuntimeException("Materia not found"));
+
+                    Materia materia = materiaRepo.findById(materiaId)
+                            .orElseThrow(() -> new RuntimeException("Materia not found"));
+
+                    // Check if this Materia_Carrera association already exists
+                    Optional<Materia_Carrera> existingMateriaCarreraOpt = existingMateriaCarreras.stream()
+                            .filter(mc -> mc.getMateria().getId() == materiaId)
+                            .findFirst();
+
+                    if (existingMateriaCarreraOpt.isPresent()) {
+                        // Update existing association with new semestre
+                        Materia_Carrera existingMateriaCarrera = existingMateriaCarreraOpt.get();
+                        existingMateriaCarrera.setSemestre(semestre);
+                        newMateriaCarreras.add(existingMateriaCarrera);
+                    } else {
+                        // Create new association
                         Materia_Carrera newMateriaCarrera = new Materia_Carrera();
                         newMateriaCarrera.setSemestre(semestre);
                         newMateriaCarrera.setMateria(materia);
                         newMateriaCarrera.setCarrera(existingCarrera);
-
                         newMateriaCarreras.add(newMateriaCarrera);
                     }
                 }
+
+                // Save all new associations
+                materia_CarreraRepo.saveAll(newMateriaCarreras);
+
                 Carrera saveCarrera = carreraRepo.save(existingCarrera);
                 resp.setCarrera(saveCarrera);
                 resp.setStatusCode(200);

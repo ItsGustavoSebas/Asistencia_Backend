@@ -12,7 +12,7 @@ public class FacultadSeeder implements CommandLineRunner, Ordered {
 
     @Override
     public int getOrder() {
-        return 1; // Establece un orden posterior al de FacultadSeeder
+        return 1;
     }
 
     @Autowired

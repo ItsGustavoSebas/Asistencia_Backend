@@ -16,8 +16,8 @@ public class Modulo {
     private String name;
     private double latitud;
     private double longitud;
-    @ManyToOne(cascade = CascadeType.REMOVE)
-    @JoinColumn(name = "facultad_id")
+    @ManyToOne
+    @JoinColumn(name = "facultad_id", nullable = false)
     private Facultad facultad;
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "modulo")
     private List<Aula> aulas;

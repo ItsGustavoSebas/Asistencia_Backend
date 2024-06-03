@@ -32,22 +32,17 @@ public class ModuloService {
                 existingModulo.setName(modulo.getName());
                 existingModulo.setFacultad(facultadRepo.findById(modulo.getFacultad().getId()).orElse(null));
                 existingModulo.setLatitud(modulo.getLatitud());
-                existingModulo.setLongitud(modulo.getLatitud());
+                existingModulo.setLongitud(modulo.getLongitud());
 
-                List<Aula> aulas = new ArrayList<>();
-                for (String aulaName : modulo.getAulaNames()) {
-                    boolean aulaAlreadyExists = false;
-                    for (Modulo m : moduloRepo.findAll()) {
-                        for (Aula a : m.getAulas()) {
-                            if (a.getName().equals(aulaName)) {
-                                aulaAlreadyExists = true;
-                                break;
-                            }
-                        }
-                        if (aulaAlreadyExists) {
-                            break;
-                        }
-                    }
+                List<String> newAulaNames = modulo.getAulaNames();
+                List<Aula> currentAulas = existingModulo.getAulas();
+
+                // Remove aulas that are not in the new list of aula names
+                currentAulas.removeIf(aula -> !newAulaNames.contains(aula.getName()));
+
+                // Add new aulas from the new list of aula names
+                for (String aulaName : newAulaNames) {
+                    boolean aulaAlreadyExists = currentAulas.stream().anyMatch(aula -> aula.getName().equals(aulaName));
                     if (!aulaAlreadyExists) {
                         Aula aula = aulaRepo.findByName(aulaName);
                         if (aula == null) {
@@ -56,13 +51,13 @@ public class ModuloService {
                             aula.setModulo(existingModulo);
                             aula = aulaRepo.save(aula);
                         }
-                        aulas.add(aula);
+                        currentAulas.add(aula);
                     }
                 }
 
-                existingModulo.setAulas(aulas);
-                Modulo saveModulo = moduloRepo.save(existingModulo);
-                reqRes.setModulo(saveModulo);
+                existingModulo.setAulas(currentAulas);
+                Modulo savedModulo = moduloRepo.save(existingModulo);
+                reqRes.setModulo(savedModulo);
                 reqRes.setStatusCode(200);
                 reqRes.setMessage("Modulo updated successfully");
             } else {
@@ -75,6 +70,9 @@ public class ModuloService {
         }
         return reqRes;
     }
+
+
+
 
     public Modulo getModulo(int moduloId) {
         return moduloRepo.findById(moduloId)
@@ -93,7 +91,7 @@ public class ModuloService {
             modulo.setName(registrationRequest.getName());
             modulo.setFacultad(facultadRepo.findById(registrationRequest.getFacultad().getId()).orElse(null));
             modulo.setLatitud(registrationRequest.getLatitud());
-            modulo.setLongitud(registrationRequest.getLatitud());
+            modulo.setLongitud(registrationRequest.getLongitud());
             moduloRepo.save(modulo);
             List<Aula> aulas = new ArrayList<>();
             for (String aulaName : registrationRequest.getAulaNames()) {
