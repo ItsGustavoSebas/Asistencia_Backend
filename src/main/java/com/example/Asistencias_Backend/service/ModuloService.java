@@ -1,24 +1,19 @@
 package com.example.Asistencias_Backend.service;
 
 import com.example.Asistencias_Backend.dto.ReqRes;
-import com.example.Asistencias_Backend.entity.Aula;
 import com.example.Asistencias_Backend.entity.Modulo;
-import com.example.Asistencias_Backend.repository.AulaRepo;
 import com.example.Asistencias_Backend.repository.FacultadRepo;
 import com.example.Asistencias_Backend.repository.ModuloRepo;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 @Service
 public class ModuloService {
     @Autowired
     private ModuloRepo moduloRepo;
-    @Autowired
-    private AulaRepo aulaRepo;
     @Autowired
     private FacultadRepo facultadRepo;
 
@@ -33,27 +28,6 @@ public class ModuloService {
                 existingModulo.setFacultad(facultadRepo.findById(modulo.getFacultad().getId()).orElse(null));
                 existingModulo.setLatitud(modulo.getLatitud());
                 existingModulo.setLongitud(modulo.getLongitud());
-
-                List<String> newAulaNames = modulo.getAulaNames();
-                List<Aula> currentAulas = existingModulo.getAulas();
-
-                // Remove aulas that are not in the new list of aula names
-                currentAulas.removeIf(aula -> !newAulaNames.contains(aula.getName()));
-
-                // Add new aulas from the new list of aula names
-                for (String aulaName : newAulaNames) {
-                    boolean aulaAlreadyExists = currentAulas.stream().anyMatch(aula -> aula.getName().equals(aulaName));
-                    if (!aulaAlreadyExists) {
-                        // Create a new Aula for the current Modulo
-                        Aula aula = new Aula();
-                        aula.setName(aulaName);
-                        aula.setModulo(existingModulo);
-                        aula = aulaRepo.save(aula);
-                        currentAulas.add(aula);
-                    }
-                }
-
-                existingModulo.setAulas(currentAulas);
                 Modulo savedModulo = moduloRepo.save(existingModulo);
                 reqRes.setModulo(savedModulo);
                 reqRes.setStatusCode(200);
@@ -78,8 +52,24 @@ public class ModuloService {
                 .orElseThrow(() -> new RuntimeException("Modulo not found"));
     }
 
-    public List<Modulo> getModulo() {
-        return moduloRepo.findAll();
+    public ReqRes getModulo() {
+        ReqRes reqRes = new ReqRes();
+        try {
+            List<Modulo> result = moduloRepo.findAll();
+            if (!result.isEmpty()) {
+                reqRes.setModuloList(result);
+                reqRes.setStatusCode(200);
+                reqRes.setMessage("Successful");
+            } else {
+                reqRes.setStatusCode(404);
+                reqRes.setMessage("No materias found");
+            }
+            return reqRes;
+        } catch (Exception e) {
+            reqRes.setStatusCode(500);
+            reqRes.setMessage("Error occurred: " + e.getMessage());
+            return reqRes;
+        }
     }
 
     public ReqRes createModulo(ReqRes registrationRequest){
@@ -91,15 +81,6 @@ public class ModuloService {
             modulo.setFacultad(facultadRepo.findById(registrationRequest.getFacultad().getId()).orElse(null));
             modulo.setLatitud(registrationRequest.getLatitud());
             modulo.setLongitud(registrationRequest.getLongitud());
-            moduloRepo.save(modulo);
-            List<Aula> aulas = new ArrayList<>();
-            for (String aulaName : registrationRequest.getAulaNames()) {
-                Aula aula = new Aula();
-                aula.setName(aulaName);
-                aula.setModulo(modulo);
-                aulas.add(aulaRepo.save(aula)); // Guardar cada aula y añadirla a la lista
-            }
-            modulo.setAulas(aulas);
             Modulo moduloResult = moduloRepo.save(modulo);
 
             if (moduloResult.getId() > 0) {
@@ -132,5 +113,26 @@ public class ModuloService {
             reqRes.setMessage("Error occurred while deleting modulo: " + e.getMessage());
         }
         return reqRes;
+    }
+
+    public ReqRes searchModulosByName(String name) {
+        ReqRes reqRes = new ReqRes();
+
+        try {
+            List<Modulo> result = moduloRepo.findByNameContainingIgnoreCase(name);
+            if (!result.isEmpty()) {
+                reqRes.setModuloList(result);
+                reqRes.setStatusCode(200);
+                reqRes.setMessage("Successful");
+            } else {
+                reqRes.setStatusCode(404);
+                reqRes.setMessage("No modulos found");
+            }
+            return reqRes;
+        } catch (Exception e) {
+            reqRes.setStatusCode(500);
+            reqRes.setMessage("Error occurred: " + e.getMessage());
+            return reqRes;
+        }
     }
 }

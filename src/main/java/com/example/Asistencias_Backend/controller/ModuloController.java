@@ -16,8 +16,8 @@ public class ModuloController {
     private ModuloService moduloService;
 
     @GetMapping("")
-    public ResponseEntity<List<Modulo>> getModulos() {
-        List<Modulo> modulos = moduloService.getModulo();
+    public ResponseEntity<ReqRes> getModulos() {
+        ReqRes modulos = moduloService.getModulo();
         return ResponseEntity.ok(modulos);
     }
 
@@ -40,6 +40,13 @@ public class ModuloController {
     @DeleteMapping("/delete/{moduloId}")
     public ResponseEntity<ReqRes> deleteModulo(@PathVariable int moduloId){
         return ResponseEntity.ok(moduloService.deleteModulo(moduloId));
+    }
+
+    @GetMapping("/get-modulos-names")
+    public ResponseEntity<ReqRes> getUsersByName(@RequestParam String name){
+        ReqRes modulos = moduloService.searchModulosByName(name);
+        return ResponseEntity.ok(modulos);
+
     }
 
 }

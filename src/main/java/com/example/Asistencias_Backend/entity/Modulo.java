@@ -19,8 +19,4 @@ public class Modulo {
     @ManyToOne
     @JoinColumn(name = "facultad_id", nullable = false)
     private Facultad facultad;
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "modulo")
-    private List<Aula> aulas;
-
-
 }

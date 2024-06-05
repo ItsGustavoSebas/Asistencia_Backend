@@ -2,6 +2,7 @@ package com.example.Asistencias_Backend.service;
 
 import com.example.Asistencias_Backend.dto.ReqRes;
 import com.example.Asistencias_Backend.entity.Materia;
+import com.example.Asistencias_Backend.entity.OurUsers;
 import com.example.Asistencias_Backend.repository.MateriaRepo;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,8 +44,24 @@ public class MateriaService {
                 .orElseThrow(() -> new RuntimeException("Materia not found"));
     }
 
-    public List<Materia> getMateria() {
-        return materiaRepo.findAll();
+    public ReqRes getMateria() {
+        ReqRes reqRes = new ReqRes();
+        try {
+            List<Materia> result = materiaRepo.findAll();
+            if (!result.isEmpty()) {
+                reqRes.setMateriaList(result);
+                reqRes.setStatusCode(200);
+                reqRes.setMessage("Successful");
+            } else {
+                reqRes.setStatusCode(404);
+                reqRes.setMessage("No materias found");
+            }
+            return reqRes;
+        } catch (Exception e) {
+            reqRes.setStatusCode(500);
+            reqRes.setMessage("Error occurred: " + e.getMessage());
+            return reqRes;
+        }
     }
 
     public ReqRes createMateria(ReqRes registrationRequest){
@@ -86,5 +103,26 @@ public class MateriaService {
             reqRes.setMessage("Error occurred while deleting materia: " + e.getMessage());
         }
         return reqRes;
+    }
+
+    public ReqRes searchMateriasByName(String name) {
+        ReqRes reqRes = new ReqRes();
+
+        try {
+            List<Materia> result = materiaRepo.findByNameContainingIgnoreCase(name);
+            if (!result.isEmpty()) {
+                reqRes.setMateriaList(result);
+                reqRes.setStatusCode(200);
+                reqRes.setMessage("Successful");
+            } else {
+                reqRes.setStatusCode(404);
+                reqRes.setMessage("No materias found");
+            }
+            return reqRes;
+        } catch (Exception e) {
+            reqRes.setStatusCode(500);
+            reqRes.setMessage("Error occurred: " + e.getMessage());
+            return reqRes;
+        }
     }
 }

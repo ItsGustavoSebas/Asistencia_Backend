@@ -37,9 +37,9 @@ public class ReqRes {
     private List<Carrera> carreraList;
     private List<MateriaSemestre> materias;
     private Modulo modulo;
+    private List<Modulo> moduloList;
     private Double latitud;
     private Double longitud;
-    private List<String> aulaNames;
     private String sigla;
     public static class MateriaSemestre {
         private int materiaId;

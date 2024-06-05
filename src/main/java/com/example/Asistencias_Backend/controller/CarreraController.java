@@ -18,8 +18,8 @@ public class CarreraController {
     private CarreraService carreraService;
 
     @GetMapping("")
-    public ResponseEntity<List<Carrera>> getCarreras() {
-        List<Carrera> carreras = carreraService.getCarrera();
+    public ResponseEntity<ReqRes> getCarreras() {
+        ReqRes carreras = carreraService.getCarrera();
         return ResponseEntity.ok(carreras);
     }
 
@@ -27,6 +27,13 @@ public class CarreraController {
     public ResponseEntity<Carrera> getRole(@PathVariable int carreraId) {
         Carrera carrera = carreraService.getCarrera(carreraId);
         return ResponseEntity.ok(carrera);
+    }
+
+    @GetMapping("/get-carreras-names")
+    public ResponseEntity<ReqRes> getCarrerasByName(@RequestParam String name){
+        ReqRes carreras = carreraService.searchCarrerasByName(name);
+        return ResponseEntity.ok(carreras);
+
     }
 
     @PostMapping("/crear")

@@ -5,6 +5,7 @@ import com.example.Asistencias_Backend.dto.ReqRes;
 import com.example.Asistencias_Backend.entity.Carrera;
 import com.example.Asistencias_Backend.entity.Materia;
 import com.example.Asistencias_Backend.entity.Materia_Carrera;
+import com.example.Asistencias_Backend.entity.OurUsers;
 import com.example.Asistencias_Backend.repository.CarreraRepo;
 import com.example.Asistencias_Backend.repository.FacultadRepo;
 import com.example.Asistencias_Backend.repository.MateriaRepo;
@@ -101,8 +102,25 @@ public class CarreraService {
                 .orElseThrow(() -> new RuntimeException("Carrera not found"));
     }
 
-    public List<Carrera> getCarrera() {
-        return carreraRepo.findAll();
+    public ReqRes getCarrera() {
+        ReqRes reqRes = new ReqRes();
+
+        try {
+            List<Carrera> result = carreraRepo.findAll();
+            if (!result.isEmpty()) {
+                reqRes.setCarreraList(result);
+                reqRes.setStatusCode(200);
+                reqRes.setMessage("Successful");
+            } else {
+                reqRes.setStatusCode(404);
+                reqRes.setMessage("No carreras found");
+            }
+            return reqRes;
+        } catch (Exception e) {
+            reqRes.setStatusCode(500);
+            reqRes.setMessage("Error occurred: " + e.getMessage());
+            return reqRes;
+        }
     }
 
     public ReqRes createCarrera(ReqRes registrationRequest) {
@@ -158,5 +176,25 @@ public class CarreraService {
         Carrera carrera = carreraRepo.findById(carreraId)
                 .orElseThrow(() -> new RuntimeException("Carrera not found"));
         return materia_CarreraRepo.findByCarrera(carrera);
+    }
+
+    public ReqRes searchCarrerasByName(String name) {
+        ReqRes reqRes = new ReqRes();
+        try {
+            List<Carrera> result = carreraRepo.findByNameContainingIgnoreCase(name);
+            if (!result.isEmpty()) {
+                reqRes.setCarreraList(result);
+                reqRes.setStatusCode(200);
+                reqRes.setMessage("Successful");
+            } else {
+                reqRes.setStatusCode(404);
+                reqRes.setMessage("No carreras found");
+            }
+            return reqRes;
+        } catch (Exception e) {
+            reqRes.setStatusCode(500);
+            reqRes.setMessage("Error occurred: " + e.getMessage());
+            return reqRes;
+        }
     }
 }

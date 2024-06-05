@@ -17,8 +17,8 @@ public class MateriaController {
     private MateriaService materiaService;
 
     @GetMapping("")
-    public ResponseEntity<List<Materia>> getMaterias() {
-        List<Materia> materias = materiaService.getMateria();
+    public ResponseEntity<ReqRes> getMaterias() {
+        ReqRes materias = materiaService.getMateria();
         return ResponseEntity.ok(materias);
     }
 
@@ -41,5 +41,11 @@ public class MateriaController {
     @DeleteMapping("/delete/{materiaId}")
     public ResponseEntity<ReqRes> deleteMateria(@PathVariable int materiaId){
         return ResponseEntity.ok(materiaService.deleteMateria(materiaId));
+    }
+
+    @GetMapping("/get-materias-names")
+    public ResponseEntity<ReqRes> getMateriasByName(@RequestParam String name){
+        ReqRes materias = materiaService.searchMateriasByName(name);
+        return ResponseEntity.ok(materias);
     }
 }
