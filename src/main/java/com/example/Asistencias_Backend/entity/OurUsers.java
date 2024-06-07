@@ -1,6 +1,7 @@
 package com.example.Asistencias_Backend.entity;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.Data;
 import org.springframework.security.core.GrantedAuthority;
@@ -15,6 +16,7 @@ import java.util.stream.Collectors;
 @Entity
 @Table(name = "ourusers")
 @Data
+@JsonIgnoreProperties({"grupos"})
 public class OurUsers implements UserDetails {
 
     @Id
@@ -28,10 +30,15 @@ public class OurUsers implements UserDetails {
             inverseJoinColumns = @JoinColumn(name = "role_id", referencedColumnName = "id"))
     private List<Role> roles = new ArrayList<>();
 
+    @OneToMany(mappedBy = "docente", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Grupo> grupos;
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return roles.stream().map(role -> new SimpleGrantedAuthority(role.getName())).collect(Collectors.toList());
     }
+
+
     @ManyToOne
     @JoinColumn(name = "cargo_id")
     private Cargo cargo;

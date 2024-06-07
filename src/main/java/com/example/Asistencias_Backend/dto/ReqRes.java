@@ -41,11 +41,11 @@ public class ReqRes {
     private Double latitud;
     private Double longitud;
     private String sigla;
+    private List<Programacion_Academica> programacionAcademicas;
     public static class MateriaSemestre {
         private int materiaId;
         private int semestre;
 
-        // Getters y setters
         public int getMateriaId() {
             return materiaId;
         }

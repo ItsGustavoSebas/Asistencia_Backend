@@ -15,7 +15,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import java.util.Arrays;
-import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
 
 @Component("UsuarioSeeder")
 @DependsOn({"RoleSeeder", "CargoSeeder"})
@@ -26,7 +27,7 @@ public class UsuarioSeeder implements CommandLineRunner, Ordered {
 
     @Override
     public int getOrder() {
-        return 6; // Establece un orden posterior al de FacultadSeeder
+        return 6;
     }
 
     @Autowired
@@ -79,5 +80,50 @@ public class UsuarioSeeder implements CommandLineRunner, Ordered {
         usuario4.setCargo(cargo3);
         usuario4.setRoles(Arrays.asList(role2));
         usuarioRepository.save(usuario4);
+
+        Set<String> uniqueNames = new HashSet<>(Arrays.asList(
+                "ZUNIGA RUIZ WILMA",
+                "CLAURE MEDRANO DE OROPEZA ELIZ",
+                "AVENDANO GONZALES EUDAL",
+                "TEJERINA GUERRA JULIO",
+                "JUSTINIANO VACA JUAN TOMAS",
+                "MORALES MENDEZ MAGALY",
+                "CALIZAYA AJHUACHO MAGNO EDWIN",
+                "CALDERON FLORES MODESTO FRANKL",
+                "NUNEZ ROMERO ERNESTO",
+                "ZABALA RUIZ HECTOR",
+                "DURAN CESPEDES BERTHY RONALD",
+                "SILES MUNOZ FELIX",
+                "ABARCA SOTA NANCY",
+                "MIRANDA CARRASCO CARLOS",
+                "VALDELOMAR ORELLANA TOMAS",
+                "ACOSTA CABEZAS BARTOLO JAVIER",
+                "ZEBALLOS PAREDES DANIEL LUIS",
+                "BALCAZAR VEIZAGA EVANS",
+                "MOLLO MAMANI ALBERTO",
+                "PEINADO PEREIRA MIGUEL JESUS",
+                "VARGAS YAPURA EDWIN",
+                "LOPEZ WINNIPEG MARIO MILTON",
+                "GUZMAN DE MOLINA ISABEL MIRIAM",
+                "LAZO ARTEAGA CARLOS ROBERTO",
+                "FERNANDEZ LLORENTY RENE",
+                "VELASCO GUAMAN ANGEL",
+                "CORTEZ UZEDA JULIO MARTIN"
+        ));
+
+        for (String fullName : uniqueNames) {
+            String[] nameParts = fullName.split(" ");
+            String name = nameParts[0];
+            String firstLetterOfLastName = nameParts[nameParts.length - 1].substring(0, 1);
+            String email = name.toLowerCase() + firstLetterOfLastName.toLowerCase() + "@gmail.com";
+
+            OurUsers usuario = new OurUsers();
+            usuario.setName(fullName);
+            usuario.setEmail(email);
+            usuario.setPassword(passwordEncoder.encode("12345678"));
+            usuario.setCargo(cargo3);
+            usuario.setRoles(Arrays.asList(role2));
+            usuarioRepository.save(usuario);
+        }
     }
 }

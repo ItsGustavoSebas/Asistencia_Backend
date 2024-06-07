@@ -1,22 +1,21 @@
 package com.example.Asistencias_Backend.entity;
-
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
-        import lombok.Data;
+import lombok.Data;
 
 import java.util.List;
 
 @Entity
-@Table(name = "dia")
+@Table(name = "tipo")
 @Data
-@JsonIgnoreProperties({"diaHorarios"})
-public class Dia {
+@JsonIgnoreProperties({"fechaImportantes"})
+public class Tipo {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
     private String name;
 
-    @OneToMany(mappedBy = "dia", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Dia_Horario> diaHorarios;
+    @OneToMany(mappedBy = "tipo", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<FechaImportante> fechaImportantes;
 }

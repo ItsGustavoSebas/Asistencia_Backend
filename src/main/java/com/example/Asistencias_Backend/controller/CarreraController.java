@@ -2,7 +2,6 @@ package com.example.Asistencias_Backend.controller;
 
 import com.example.Asistencias_Backend.dto.ReqRes;
 import com.example.Asistencias_Backend.entity.Carrera;
-import com.example.Asistencias_Backend.entity.Materia;
 import com.example.Asistencias_Backend.entity.Materia_Carrera;
 import com.example.Asistencias_Backend.service.CarreraService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,7 +23,7 @@ public class CarreraController {
     }
 
     @GetMapping("/{carreraId}")
-    public ResponseEntity<Carrera> getRole(@PathVariable int carreraId) {
+    public ResponseEntity<Carrera> getCarrera(@PathVariable int carreraId) {
         Carrera carrera = carreraService.getCarrera(carreraId);
         return ResponseEntity.ok(carrera);
     }
@@ -37,7 +36,7 @@ public class CarreraController {
     }
 
     @PostMapping("/crear")
-    public ResponseEntity<ReqRes> crear(@RequestBody ReqRes reg){
+    public ResponseEntity<ReqRes> createCarrera(@RequestBody ReqRes reg){
         return ResponseEntity.ok(carreraService.createCarrera(reg));
     }
 

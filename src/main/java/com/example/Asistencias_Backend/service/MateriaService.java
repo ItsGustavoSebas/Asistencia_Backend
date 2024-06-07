@@ -2,7 +2,6 @@ package com.example.Asistencias_Backend.service;
 
 import com.example.Asistencias_Backend.dto.ReqRes;
 import com.example.Asistencias_Backend.entity.Materia;
-import com.example.Asistencias_Backend.entity.OurUsers;
 import com.example.Asistencias_Backend.repository.MateriaRepo;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;

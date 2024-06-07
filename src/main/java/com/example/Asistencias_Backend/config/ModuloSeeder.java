@@ -9,15 +9,13 @@ import org.springframework.context.annotation.DependsOn;
 import org.springframework.core.Ordered;
 import org.springframework.stereotype.Component;
 
-import java.util.Arrays;
-
 @Component("ModuloSeeder")
 @DependsOn({"FacultadSeeder"})
 public class ModuloSeeder implements CommandLineRunner, Ordered {
 
     @Override
     public int getOrder() {
-        return 2; // Establece un orden posterior al de FacultadSeeder
+        return 2; 
     }
 
     @Autowired

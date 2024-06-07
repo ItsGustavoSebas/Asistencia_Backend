@@ -1,7 +1,6 @@
 package com.example.Asistencias_Backend.service;
 
 import com.example.Asistencias_Backend.entity.Facultad;
-import com.example.Asistencias_Backend.entity.Modulo;
 import com.example.Asistencias_Backend.repository.FacultadRepo;
 import org.springframework.stereotype.Service;
 

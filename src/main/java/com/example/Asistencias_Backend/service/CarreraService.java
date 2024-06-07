@@ -5,7 +5,6 @@ import com.example.Asistencias_Backend.dto.ReqRes;
 import com.example.Asistencias_Backend.entity.Carrera;
 import com.example.Asistencias_Backend.entity.Materia;
 import com.example.Asistencias_Backend.entity.Materia_Carrera;
-import com.example.Asistencias_Backend.entity.OurUsers;
 import com.example.Asistencias_Backend.repository.CarreraRepo;
 import com.example.Asistencias_Backend.repository.FacultadRepo;
 import com.example.Asistencias_Backend.repository.MateriaRepo;
@@ -38,7 +37,6 @@ public class CarreraService {
                 existingCarrera.setName(reqRes.getName());
                 existingCarrera.setFacultad(facultadRepo.findById(reqRes.getFacultad().getId()).orElse(null));
 
-                // Remove existing Materia_Carrera associations not in the new list
                 List<Materia_Carrera> existingMateriaCarreras = materia_CarreraRepo.findByCarrera(existingCarrera);
                 Set<Integer> newMateriaIds = reqRes.getMaterias().stream()
                         .map(ReqRes.MateriaSemestre::getMateriaId)
@@ -50,7 +48,6 @@ public class CarreraService {
                     }
                 }
 
-                // Create new Materia_Carrera associations
                 List<Materia_Carrera> newMateriaCarreras = new ArrayList<>();
                 for (ReqRes.MateriaSemestre materiaSemestre : reqRes.getMaterias()) {
                     int materiaId = materiaSemestre.getMateriaId();
@@ -59,18 +56,15 @@ public class CarreraService {
                     Materia materia = materiaRepo.findById(materiaId)
                             .orElseThrow(() -> new RuntimeException("Materia not found"));
 
-                    // Check if this Materia_Carrera association already exists
                     Optional<Materia_Carrera> existingMateriaCarreraOpt = existingMateriaCarreras.stream()
                             .filter(mc -> mc.getMateria().getId() == materiaId)
                             .findFirst();
 
                     if (existingMateriaCarreraOpt.isPresent()) {
-                        // Update existing association with new semestre
                         Materia_Carrera existingMateriaCarrera = existingMateriaCarreraOpt.get();
                         existingMateriaCarrera.setSemestre(semestre);
                         newMateriaCarreras.add(existingMateriaCarrera);
                     } else {
-                        // Create new association
                         Materia_Carrera newMateriaCarrera = new Materia_Carrera();
                         newMateriaCarrera.setSemestre(semestre);
                         newMateriaCarrera.setMateria(materia);
@@ -79,7 +73,6 @@ public class CarreraService {
                     }
                 }
 
-                // Save all new associations
                 materia_CarreraRepo.saveAll(newMateriaCarreras);
 
                 Carrera saveCarrera = carreraRepo.save(existingCarrera);

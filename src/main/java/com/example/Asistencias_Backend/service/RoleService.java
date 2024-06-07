@@ -28,10 +28,8 @@ public class RoleService {
             Role role = roleRepository.findById(roleId)
                     .orElseThrow(() -> new RuntimeException("Role not found"));
 
-            // Eliminar todos los permisos existentes del rol
             role.getPermissions().clear();
 
-            // Añadir los nuevos permisos a partir de los IDs recibidos
             List<Permission> permissions = permissionIds.stream()
                     .map(permissionId -> permissionRepository.findById(permissionId)
                             .orElseThrow(() -> new RuntimeException("Permission not found with ID: " + permissionId)))

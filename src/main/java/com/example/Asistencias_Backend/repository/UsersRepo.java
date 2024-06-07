@@ -2,6 +2,7 @@ package com.example.Asistencias_Backend.repository;
 
 
 import com.example.Asistencias_Backend.entity.OurUsers;
+import com.example.Asistencias_Backend.entity.Role;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
@@ -13,4 +14,5 @@ public interface UsersRepo extends JpaRepository<OurUsers, Integer> {
     List<OurUsers> findByRoles_Name(String roleName);
     List<OurUsers> findByNameContainingIgnoreCase(String name);
     List<OurUsers> findByRoles_NameAndNameContainingIgnoreCase(String roleName, String name);
+    OurUsers findByName(String name);
 }

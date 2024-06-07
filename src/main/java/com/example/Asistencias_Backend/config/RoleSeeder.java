@@ -16,7 +16,7 @@ public class RoleSeeder implements CommandLineRunner, Ordered {
 
     @Override
     public int getOrder() {
-        return 5; // Establece un orden posterior al de FacultadSeeder
+        return 5; 
     }
 
 
@@ -28,7 +28,6 @@ public class RoleSeeder implements CommandLineRunner, Ordered {
 
     @Override
     public void run(String... args) throws Exception {
-        // Crear permisos
         Permission permisoListarRoles = new Permission();
         permisoListarRoles.setName("Listar Roles");
         permisoRepository.save(permisoListarRoles);
@@ -101,7 +100,6 @@ public class RoleSeeder implements CommandLineRunner, Ordered {
         permisoActualizarMaterias.setName("Actualizar Materias");
         permisoRepository.save(permisoActualizarMaterias);
 
-        // Crear roles y asignar permisos
         Role rolAdmin = new Role();
         rolAdmin.setName("ADMIN");
         rolAdmin.setPermissions(Arrays.asList(permisoListarRoles, permisoActualizarRoles,

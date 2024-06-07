@@ -9,7 +9,7 @@ import java.util.List;
 @Entity
 @Table(name = "facultad")
 @Data
-@JsonIgnoreProperties({"carreras", "modulos"})
+@JsonIgnoreProperties({"carreras", "modulos", "facultadGestions"})
 public class Facultad {
 
     @Id
@@ -22,4 +22,7 @@ public class Facultad {
 
     @OneToMany(mappedBy = "facultad", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Modulo> modulos;
+
+    @OneToMany(mappedBy = "facultad", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Facultad_Gestion> facultadGestions;
 }

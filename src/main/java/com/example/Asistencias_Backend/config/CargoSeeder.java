@@ -12,7 +12,7 @@ public class CargoSeeder implements CommandLineRunner, Ordered {
 
     @Override
     public int getOrder() {
-        return 4; // Establece un orden posterior al de FacultadSeeder
+        return 4;
     }
 
     @Autowired

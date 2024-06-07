@@ -8,7 +8,6 @@ import com.example.Asistencias_Backend.entity.Role;
 import com.example.Asistencias_Backend.repository.CargoRepo;
 import com.example.Asistencias_Backend.repository.RoleRepo;
 import com.example.Asistencias_Backend.repository.UsersRepo;
-import org.apache.catalina.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -48,7 +47,6 @@ public class UsersManagementService {
             ourUser.setName(registrationRequest.getName());
             ourUser.setPassword(passwordEncoder.encode(registrationRequest.getPassword()));
 
-            // Asignar roles al usuario
             List<Role> userRoles = registrationRequest.getRoles().stream()
                     .map(roleName -> roleRepository.findByName(roleName))
                     .collect(Collectors.toList());
@@ -196,15 +194,13 @@ public class UsersManagementService {
                 existingUser.setEmail(updatedUser.getEmail());
                 existingUser.setName(updatedUser.getName());
 
-                // Check if password is present in the request
                 if (updatedUser.getPassword() != null && !updatedUser.getPassword().isEmpty()) {
-                    // Encode the password and update it
                     existingUser.setPassword(passwordEncoder.encode(updatedUser.getPassword()));
                 }
                 List<Role> userRoles = updatedRoles.stream()
-                        .distinct() // Eliminar roles duplicados
+                        .distinct() 
                         .map(roleName -> roleRepository.findByName(roleName))
-                        .filter(Objects::nonNull) // Filtrar roles encontrados
+                        .filter(Objects::nonNull) 
                         .collect(Collectors.toList());
                 existingUser.setRoles(userRoles);
                 Cargo cargo = cargoRepo.findById(updatedUser.getCargo().getId())

@@ -2,13 +2,10 @@ package com.example.Asistencias_Backend.controller;
 
 import com.example.Asistencias_Backend.dto.ReqRes;
 import com.example.Asistencias_Backend.entity.Materia;
-import com.example.Asistencias_Backend.entity.Role;
 import com.example.Asistencias_Backend.service.MateriaService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/adminuser/materias")
