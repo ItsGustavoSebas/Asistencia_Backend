@@ -2,7 +2,6 @@ package com.example.Asistencias_Backend.controller;
 
 import com.example.Asistencias_Backend.dto.ReqRes;
 import com.example.Asistencias_Backend.entity.Facultad;
-import com.example.Asistencias_Backend.entity.Materia;
 import com.example.Asistencias_Backend.service.FacultadService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
