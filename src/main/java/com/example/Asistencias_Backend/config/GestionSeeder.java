@@ -86,7 +86,7 @@ public class GestionSeeder implements CommandLineRunner, Ordered {
         fechaImportante3.setFechaFin(LocalDate.parse("30-05-2024",formatter));
         fechaImportante3.setDescripcion("Festividad de Corpus Christi");
         fechaImportante3.setFacultadGestion(facultadGestion1);
-        fechaImportante3.setTipo(tipo3);
+        fechaImportante3.setTipo(tipo2);
         fechaImportanteRepo.save(fechaImportante3);
 
         FechaImportante fechaImportante5 = new FechaImportante();

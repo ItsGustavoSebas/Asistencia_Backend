@@ -29,12 +29,6 @@ public class Programacion_AcademicaSeeder implements CommandLineRunner, Ordered 
     private Dia_HorarioRepo diaHorarioRepo;
 
     @Autowired
-    private DiaRepo diaRepo;
-
-    @Autowired
-    private HorarioRepo horarioRepo;
-
-    @Autowired
     private GrupoRepo grupoRepo;
 
     @Autowired
@@ -56,7 +50,7 @@ public class Programacion_AcademicaSeeder implements CommandLineRunner, Ordered 
                 new ProgramacionData("LIN100", "Z4", "ZUNIGA RUIZ WILMA",
                         Arrays.asList(
                                 new DiaHorarioData("Martes", "16:00", "18:15"),
-        new DiaHorarioData("Jueves", "16:00", "18:15")
+                                new DiaHorarioData("Jueves", "16:00", "18:15")
                         )),
                 new ProgramacionData("LIN100", "Z5", "CLAURE MEDRANO DE OROPEZA ELIZ",
                         Arrays.asList(
@@ -65,24 +59,24 @@ public class Programacion_AcademicaSeeder implements CommandLineRunner, Ordered 
                         )),
                 new ProgramacionData("MAT101", "F1", "AVENDANO GONZALES EUDAL",
                         Arrays.asList(
-                                new DiaHorarioData("Miércoles", "18:15", "20:30"),
+                                new DiaHorarioData("Miercoles", "18:15", "20:30"),
                                 new DiaHorarioData("Viernes", "18:15", "20:30")
                         )),
                 new ProgramacionData("MAT101", "H", "TEJERINA GUERRA JULIO",
                         Arrays.asList(
-                                new DiaHorarioData("Miércoles", "07:00", "09:15"),
+                                new DiaHorarioData("Miercoles", "07:00", "09:15"),
                                 new DiaHorarioData("Viernes", "07:00", "09:15")
                         )),
                 new ProgramacionData("MAT101", "SB", "JUSTINIANO VACA JUAN TOMAS",
                         Arrays.asList(
                                 new DiaHorarioData("Lunes", "08:30", "10:00"),
-                                new DiaHorarioData("Miércoles", "08:30", "10:00"),
+                                new DiaHorarioData("Miercoles", "08:30", "10:00"),
                                 new DiaHorarioData("Viernes", "08:30", "10:00")
                         )),
                 new ProgramacionData("MAT101", "BF", "MORALES MENDEZ MAGALY",
                         Arrays.asList(
                                 new DiaHorarioData("Lunes", "08:30", "10:00"),
-                                new DiaHorarioData("Miércoles", "08:30", "10:00"),
+                                new DiaHorarioData("Miercoles", "08:30", "10:00"),
                                 new DiaHorarioData("Viernes", "08:30", "10:00")
                         )),
                 new ProgramacionData("MAT101", "SG", "CALIZAYA AJHUACHO MAGNO EDWIN",
@@ -93,12 +87,12 @@ public class Programacion_AcademicaSeeder implements CommandLineRunner, Ordered 
                 new ProgramacionData("MAT101", "SI", "CALDERON FLORES MODESTO FRANKL",
                         Arrays.asList(
                                 new DiaHorarioData("Lunes", "15:30", "17:00"),
-                                new DiaHorarioData("Miércoles", "13:45", "16:00")
+                                new DiaHorarioData("Miercoles", "13:45", "16:00")
                         )),
                 new ProgramacionData("MAT101", "SI", "NUNEZ ROMERO ERNESTO",
                         Arrays.asList(
                                 new DiaHorarioData("Lunes", "13:45", "16:00"),
-                                new DiaHorarioData("Miércoles", "13:45", "16:00")
+                                new DiaHorarioData("Miercoles", "13:45", "16:00")
                         )),
                 new ProgramacionData("MAT101", "SJ", "ZABALA RUIZ HECTOR",
                         Arrays.asList(
@@ -147,18 +141,19 @@ public class Programacion_AcademicaSeeder implements CommandLineRunner, Ordered 
                         )),
                 new ProgramacionData("FIS102", "NF", "CALDERON FLORES MODESTO FRANKL",
                         Arrays.asList(
-                                new DiaHorarioData("Miércoles", "18:15", "20:30"),
+                                new DiaHorarioData("Miercoles", "18:15", "20:30"),
                                 new DiaHorarioData("Viernes", "18:15", "20:30")
                         )),
                 new ProgramacionData("FIS102", "NW", "ZEBALLOS PAREDES DANIEL LUIS",
                         Arrays.asList(
-                                new DiaHorarioData("Miércoles", "07:00", "09:15"),
-                                new DiaHorarioData("Viernes", "07:00", "09:15")
+                                new DiaHorarioData("Miercoles", "07:00", "09:15"),
+                                new DiaHorarioData("Viernes", "07:00", "09:15"),
+                                new DiaHorarioData("Jueves", "09:15", "11:30")
                         )),
                 new ProgramacionData("FIS102", "SB", "ZEBALLOS PAREDES DANIEL LUIS",
                         Arrays.asList(
                                 new DiaHorarioData("Lunes", "13:45", "15:15"),
-                                new DiaHorarioData("Miércoles", "13:45", "15:15"),
+                                new DiaHorarioData("Miercoles", "13:45", "15:15"),
                                 new DiaHorarioData("Viernes", "13:45", "15:15"),
                                 new DiaHorarioData("Viernes", "16:45", "18:15")
                         ))

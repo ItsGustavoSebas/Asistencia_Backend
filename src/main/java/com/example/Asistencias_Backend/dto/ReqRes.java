@@ -42,6 +42,16 @@ public class ReqRes {
     private Double longitud;
     private String sigla;
     private List<Programacion_Academica> programacionAcademicas;
+    private List<Grupo> grupoList;
+    private Asistencia asistencia;
+    private Licencia licencia;
+    private List<Asistencia> asistenciaList;
+    private Integer programacionAcademicaId;
+    private String fechaInicio;
+    private String fechaFin;
+    private String motivo;
+    private Integer asistenciaId;
+    private String fecha;
     public static class MateriaSemestre {
         private int materiaId;
         private int semestre;

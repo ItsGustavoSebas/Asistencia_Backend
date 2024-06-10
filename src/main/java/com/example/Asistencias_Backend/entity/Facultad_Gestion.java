@@ -24,7 +24,7 @@ public class Facultad_Gestion {
     @JoinColumn(name = "facultad_id")
     private Facultad facultad;
 
-    @OneToMany(mappedBy = "facultadGestion", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(fetch = FetchType.EAGER, mappedBy = "facultadGestion", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<FechaImportante> fechaImportantes;
 
     @OneToMany(mappedBy = "facultadGestion", cascade = CascadeType.ALL, orphanRemoval = true)

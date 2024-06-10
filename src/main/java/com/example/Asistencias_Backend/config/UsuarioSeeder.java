@@ -96,7 +96,7 @@ public class UsuarioSeeder implements CommandLineRunner, Ordered {
                 "SILES MUNOZ FELIX",
                 "ABARCA SOTA NANCY",
                 "MIRANDA CARRASCO CARLOS",
-                "VALDELOMAR ORELLANA TOMAS",
+                "VALDEMOLAR ORELLANA TOMAS",
                 "ACOSTA CABEZAS BARTOLO JAVIER",
                 "ZEBALLOS PAREDES DANIEL LUIS",
                 "BALCAZAR VEIZAGA EVANS",
