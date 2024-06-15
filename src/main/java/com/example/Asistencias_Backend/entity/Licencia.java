@@ -16,6 +16,6 @@ public class Licencia {
     private String motivo;
     private Boolean aprobado;
     @ManyToOne
-    @JoinColumn(name = "programacion_academica_id")
-    private Programacion_Academica programacionAcademica;
+    @JoinColumn(name = "usuario_id")
+    private OurUsers ourUsers;
 }

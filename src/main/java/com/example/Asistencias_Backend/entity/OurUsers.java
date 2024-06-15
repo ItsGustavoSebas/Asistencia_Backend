@@ -16,7 +16,7 @@ import java.util.stream.Collectors;
 @Entity
 @Table(name = "ourusers")
 @Data
-@JsonIgnoreProperties({"grupos"})
+@JsonIgnoreProperties({"grupos", "licencias"})
 public class OurUsers implements UserDetails {
 
     @Id
@@ -37,7 +37,8 @@ public class OurUsers implements UserDetails {
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return roles.stream().map(role -> new SimpleGrantedAuthority(role.getName())).collect(Collectors.toList());
     }
-
+    @OneToMany(mappedBy = "ourUsers", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Licencia> licencias;
 
     @ManyToOne
     @JoinColumn(name = "cargo_id")

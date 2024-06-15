@@ -1,18 +1,17 @@
 
 package com.example.Asistencias_Backend.service;
 
+import com.example.Asistencias_Backend.dto.AsistenciasDTO;
 import com.example.Asistencias_Backend.dto.ReqRes;
-import com.example.Asistencias_Backend.entity.Carrera;
-import com.example.Asistencias_Backend.entity.Materia;
-import com.example.Asistencias_Backend.entity.Materia_Carrera;
-import com.example.Asistencias_Backend.repository.CarreraRepo;
-import com.example.Asistencias_Backend.repository.FacultadRepo;
-import com.example.Asistencias_Backend.repository.MateriaRepo;
-import com.example.Asistencias_Backend.repository.Materia_CarreraRepo;
+import com.example.Asistencias_Backend.dto.UsuarioEstadoAsistenciasDTO;
+import com.example.Asistencias_Backend.entity.*;
+import com.example.Asistencias_Backend.repository.*;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -26,7 +25,8 @@ public class CarreraService {
     private FacultadRepo facultadRepo;
     @Autowired
     private Materia_CarreraRepo materia_CarreraRepo;
-
+    @Autowired
+    private UsersRepo usersRepo;
     @Transactional
     public ReqRes updateCarrera(int carrera_id, ReqRes reqRes) {
         ReqRes resp = new ReqRes();
@@ -189,5 +189,332 @@ public class CarreraService {
             reqRes.setMessage("Error occurred: " + e.getMessage());
             return reqRes;
         }
+    }
+
+    public List<UsuarioEstadoAsistenciasDTO> getAllUsersEstadoAsistenciasNameDate(int carreraId, String name, Date startDate, Date endDate) {
+        List<OurUsers> users = usersRepo.findByRoles_NameAndNameContainingIgnoreCase("USER", name);
+        List<UsuarioEstadoAsistenciasDTO> usuariosEstadoAsistenciasDTO = new ArrayList<>();
+
+        for (OurUsers user : users) {
+            List<Grupo> grupos = user.getGrupos().stream()
+                    .filter(grupo -> grupo.getMateriaCarrera().getCarrera().getId() == carreraId)
+                    .collect(Collectors.toList());
+
+            if (!grupos.isEmpty()) {
+                int faltas = 0;
+                int asistencias = 0;
+                int licencias = 0;
+                int atrasos = 0;
+                int numGrupos = grupos.size();
+                int numProgramaciones = 0;
+                for (Grupo grupo : grupos) {
+                    List<Programacion_Academica> programaciones = grupo.getProgramacionAcademicas();
+                    numProgramaciones += programaciones.size();
+                    for (Programacion_Academica programacion : programaciones) {
+                        List<Asistencia> asistenciasList = programacion.getAsistencias();
+                        for (Asistencia asistencia : asistenciasList) {
+                            LocalDateTime fechaAsistencia = asistencia.getFecha();
+                            if (!fechaAsistencia.isBefore(startDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime())
+                                    && !fechaAsistencia.isAfter(endDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime().withHour(23).withMinute(59).withSecond(59))
+                                    && fechaAsistencia.isBefore(LocalDateTime.now())) {
+                                if (asistencia.getEstado().equals("Falta")) {
+                                    faltas++;
+                                } else if (asistencia.getEstado().equals("Presente")) {
+                                    asistencias++;
+                                } else if (asistencia.getEstado().equals("Licencia")) {
+                                    licencias++;
+                                } else if (asistencia.getEstado().equals("Atraso")) {
+                                    atrasos++;
+                                }
+                            }
+                        }
+                    }
+                }
+                UsuarioEstadoAsistenciasDTO usuarioEstadoAsistenciasDTO = new UsuarioEstadoAsistenciasDTO(user.getId(), user.getName(), faltas, asistencias, licencias, atrasos, numGrupos, numProgramaciones);
+                usuariosEstadoAsistenciasDTO.add(usuarioEstadoAsistenciasDTO);
+            }
+        }
+        return usuariosEstadoAsistenciasDTO;
+    }
+
+
+    public List<UsuarioEstadoAsistenciasDTO> getAllUsersEstadoAsistenciasDate(int carreraId, Date startDate, Date endDate) {
+        List<OurUsers> users = usersRepo.findByRoles_Name("USER");
+
+        List<UsuarioEstadoAsistenciasDTO> usuariosEstadoAsistenciasDTO = new ArrayList<>();
+
+        for (OurUsers user : users) {
+            List<Grupo> grupos = user.getGrupos().stream()
+                    .filter(grupo -> grupo.getMateriaCarrera().getCarrera().getId() == carreraId)
+                    .collect(Collectors.toList());
+            if (!grupos.isEmpty()) {
+                int faltas = 0;
+                int asistencias = 0;
+                int licencias = 0;
+                int atrasos = 0;
+                int numGrupos = grupos.size();
+                int numProgramaciones = 0;
+                for (Grupo grupo : grupos) {
+                    List<Programacion_Academica> programaciones = grupo.getProgramacionAcademicas();
+                    numProgramaciones += programaciones.size();
+                    for (Programacion_Academica programacion : programaciones) {
+                        List<Asistencia> asistenciasList = programacion.getAsistencias();
+                        for (Asistencia asistencia : asistenciasList) {
+                            LocalDateTime fechaAsistencia = asistencia.getFecha();
+                            if (!fechaAsistencia.isBefore(startDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime())
+                                    && !fechaAsistencia.isAfter(endDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime().withHour(23).withMinute(59).withSecond(59))
+                                    && fechaAsistencia.isBefore(LocalDateTime.now())) {
+                                if (asistencia.getEstado().equals("Falta")) {
+                                    faltas++;
+                                } else if (asistencia.getEstado().equals("Presente")) {
+                                    asistencias++;
+                                } else if (asistencia.getEstado().equals("Licencia")) {
+                                    licencias++;
+                                } else if (asistencia.getEstado().equals("Atraso")) {
+                                    atrasos++;
+                                }
+                            }
+                        }
+                    }
+                }
+                UsuarioEstadoAsistenciasDTO usuarioEstadoAsistenciasDTO = new UsuarioEstadoAsistenciasDTO(user.getId(), user.getName(), faltas, asistencias, licencias, atrasos, numGrupos, numProgramaciones);
+                usuariosEstadoAsistenciasDTO.add(usuarioEstadoAsistenciasDTO);
+            }
+        }
+        return usuariosEstadoAsistenciasDTO;
+    }
+
+    public List<UsuarioEstadoAsistenciasDTO> getAllUsersEstadoAsistencias(int carreraId) {
+        List<OurUsers> users = usersRepo.findByRoles_Name("USER");
+        List<UsuarioEstadoAsistenciasDTO> usuariosEstadoAsistenciasDTO = new ArrayList<>();
+        for (OurUsers user : users) {
+            List<Grupo> grupos = user.getGrupos().stream()
+                    .filter(grupo -> grupo.getMateriaCarrera().getCarrera().getId() == carreraId)
+                    .collect(Collectors.toList());
+            if (!grupos.isEmpty()) {
+                int faltas = 0;
+                int asistencias = 0;
+                int licencias = 0;
+                int atrasos = 0;
+                int numGrupos = grupos.size();
+                int numProgramaciones = 0;
+                for (Grupo grupo : grupos) {
+                    List<Programacion_Academica> programaciones = grupo.getProgramacionAcademicas();
+                    numProgramaciones += programaciones.size();
+                    for (Programacion_Academica programacion : programaciones) {
+                        List<Asistencia> asistenciasList = programacion.getAsistencias();
+                        for (Asistencia asistencia : asistenciasList) {
+                            LocalDateTime fechaAsistencia = asistencia.getFecha();
+                            if (fechaAsistencia.isBefore(LocalDateTime.now())) {
+                                if (asistencia.getEstado().equals("Falta")) {
+                                    faltas++;
+                                } else if (asistencia.getEstado().equals("Presente")) {
+                                    asistencias++;
+                                } else if (asistencia.getEstado().equals("Licencia")) {
+                                    licencias++;
+                                } else if (asistencia.getEstado().equals("Atraso")) {
+                                    atrasos++;
+                                }
+                            }
+                        }
+                    }
+                }
+                UsuarioEstadoAsistenciasDTO usuarioEstadoAsistenciasDTO = new UsuarioEstadoAsistenciasDTO(user.getId(), user.getName(), faltas, asistencias, licencias, atrasos, numGrupos, numProgramaciones);
+                usuariosEstadoAsistenciasDTO.add(usuarioEstadoAsistenciasDTO);
+            }
+        }
+        return usuariosEstadoAsistenciasDTO;
+    }
+
+    public List<UsuarioEstadoAsistenciasDTO> getAllUsersEstadoAsistenciasName(int carreraId, String name) {
+        List<OurUsers> users = usersRepo.findByNameContainingIgnoreCase(name);
+
+        List<UsuarioEstadoAsistenciasDTO> usuariosEstadoAsistenciasDTO = new ArrayList<>();
+
+        for (OurUsers user : users) {
+            List<Grupo> grupos = user.getGrupos().stream()
+                    .filter(grupo -> grupo.getMateriaCarrera().getCarrera().getId() == carreraId)
+                    .collect(Collectors.toList());
+            if (!grupos.isEmpty()) {
+                int faltas = 0;
+                int asistencias = 0;
+                int licencias = 0;
+                int atrasos = 0;
+                int numGrupos = grupos.size();
+                int numProgramaciones = 0;
+                for (Grupo grupo : grupos) {
+                    List<Programacion_Academica> programaciones = grupo.getProgramacionAcademicas();
+                    numProgramaciones += programaciones.size();
+                    for (Programacion_Academica programacion : programaciones) {
+                        List<Asistencia> asistenciasList = programacion.getAsistencias();
+                        for (Asistencia asistencia : asistenciasList) {
+                            LocalDateTime fechaAsistencia = asistencia.getFecha();
+                            if (fechaAsistencia.isBefore(LocalDateTime.now())) {
+                                if (asistencia.getEstado().equals("Falta")) {
+                                    faltas++;
+                                } else if (asistencia.getEstado().equals("Presente")) {
+                                    asistencias++;
+                                } else if (asistencia.getEstado().equals("Licencia")) {
+                                    licencias++;
+                                } else if (asistencia.getEstado().equals("Atraso")) {
+                                    atrasos++;
+                                }
+                            }
+                        }
+                    }
+                }
+                UsuarioEstadoAsistenciasDTO usuarioEstadoAsistenciasDTO = new UsuarioEstadoAsistenciasDTO(user.getId(), user.getName(), faltas, asistencias, licencias, atrasos, numGrupos, numProgramaciones);
+                usuariosEstadoAsistenciasDTO.add(usuarioEstadoAsistenciasDTO);
+            }
+        }
+        return usuariosEstadoAsistenciasDTO;
+    }
+
+    public List<AsistenciasDTO> getAsistenciasByUserIdWeb(int carreraId) {
+        List<OurUsers> users = usersRepo.findAll();
+        List<AsistenciasDTO> asistenciasDTO = new ArrayList<>();
+        for (OurUsers user : users) {
+            List<Grupo> grupos = user.getGrupos().stream()
+                    .filter(grupo -> grupo.getMateriaCarrera().getCarrera().getId() == carreraId)
+                    .collect(Collectors.toList());
+            for (Grupo grupo : grupos) {
+                List<Programacion_Academica> programaciones = grupo.getProgramacionAcademicas();
+                for (Programacion_Academica programacion : programaciones) {
+                    List<Asistencia> asistencias = programacion.getAsistencias();
+                    for (Asistencia asistencia : asistencias) {
+                        LocalDateTime fechaAsistencia = asistencia.getFecha();
+                        if (fechaAsistencia.isBefore(LocalDateTime.now())) {
+                            asistencia.setProgramacionAcademica(null);
+                            AsistenciasDTO asistenciaDTO = new AsistenciasDTO();
+                            asistenciaDTO.setNombre(programacion.getGrupo().getDocente().getName());
+                            asistenciaDTO.setId(asistencia.getId());
+                            asistenciaDTO.setEstado(asistencia.getEstado());
+                            asistenciaDTO.setFecha(asistencia.getFecha());
+                            asistenciaDTO.setHora(asistencia.getFecha());
+                            asistenciaDTO.setMateriaSigla(programacion.getGrupo().getMateriaCarrera().getMateria().getSigla());
+                            asistenciaDTO.setGrupoName(programacion.getGrupo().getName());
+                            asistenciaDTO.setHoraInicio(programacion.getDiaHorario().getHorario().getHoraInicio());
+                            asistenciaDTO.setHoraFin(programacion.getDiaHorario().getHorario().getHoraFin());
+                            asistenciasDTO.add(asistenciaDTO);
+                        }
+                    }
+                }
+            }
+        }
+        asistenciasDTO.sort(Comparator.comparing(AsistenciasDTO::getFecha));
+        return asistenciasDTO;
+    }
+
+    public List<AsistenciasDTO> getAsistenciasByUserIdDate(int carreraId, Date startDate, Date endDate) {
+        List<OurUsers> users = usersRepo.findAll();
+        List<AsistenciasDTO> asistenciasDTO = new ArrayList<>();
+        for (OurUsers user : users) {
+            List<Grupo> grupos = user.getGrupos().stream()
+                    .filter(grupo -> grupo.getMateriaCarrera().getCarrera().getId() == carreraId)
+                    .collect(Collectors.toList());
+            for (Grupo grupo : grupos) {
+                List<Programacion_Academica> programaciones = grupo.getProgramacionAcademicas();
+                for (Programacion_Academica programacion : programaciones) {
+                    List<Asistencia> asistencias = programacion.getAsistencias();
+                    for (Asistencia asistencia : asistencias) {
+                        LocalDateTime fechaAsistencia = asistencia.getFecha();
+                        if (!fechaAsistencia.isBefore(startDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime())
+                                && !fechaAsistencia.isAfter(endDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime().withHour(23).withMinute(59).withSecond(59))
+                                && fechaAsistencia.isBefore(LocalDateTime.now())) {
+                            asistencia.setProgramacionAcademica(null);
+                            AsistenciasDTO asistenciaDTO = new AsistenciasDTO();
+                            asistenciaDTO.setId(asistencia.getId());
+                            asistenciaDTO.setNombre(programacion.getGrupo().getDocente().getName());
+                            asistenciaDTO.setEstado(asistencia.getEstado());
+                            asistenciaDTO.setFecha(asistencia.getFecha());
+                            asistenciaDTO.setHora(asistencia.getFecha());
+                            asistenciaDTO.setMateriaSigla(programacion.getGrupo().getMateriaCarrera().getMateria().getSigla());
+                            asistenciaDTO.setGrupoName(programacion.getGrupo().getName());
+                            asistenciaDTO.setHoraInicio(programacion.getDiaHorario().getHorario().getHoraInicio());
+                            asistenciaDTO.setHoraFin(programacion.getDiaHorario().getHorario().getHoraFin());
+                            asistenciasDTO.add(asistenciaDTO);
+                        }
+                    }
+                }
+            }
+        }
+        asistenciasDTO.sort(Comparator.comparing(AsistenciasDTO::getFecha));
+        return asistenciasDTO;
+    }
+
+    public List<AsistenciasDTO> getAsistenciasByUserIdEstadoDate(int carreraId, String estado, Date startDate, Date endDate) {
+        List<OurUsers> users = usersRepo.findAll();
+        List<AsistenciasDTO> asistenciasDTO = new ArrayList<>();
+        for (OurUsers user : users) {
+            List<Grupo> grupos = user.getGrupos().stream()
+                    .filter(grupo -> grupo.getMateriaCarrera().getCarrera().getId() == carreraId)
+                    .collect(Collectors.toList());
+            for (Grupo grupo : grupos) {
+                List<Programacion_Academica> programaciones = grupo.getProgramacionAcademicas();
+                for (Programacion_Academica programacion : programaciones) {
+                    List<Asistencia> asistencias = programacion.getAsistencias();
+                    for (Asistencia asistencia : asistencias) {
+                        LocalDateTime fechaAsistencia = asistencia.getFecha();
+                        if (asistencia.getEstado().equals(estado)
+                                && !fechaAsistencia.isBefore(startDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime())
+                                && !fechaAsistencia.isAfter(endDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime().withHour(23).withMinute(59).withSecond(59))
+                                && fechaAsistencia.isBefore(LocalDateTime.now())) {
+                            asistencia.setProgramacionAcademica(null);
+                            AsistenciasDTO asistenciaDTO = new AsistenciasDTO();
+                            asistenciaDTO.setNombre(programacion.getGrupo().getDocente().getName());
+                            asistenciaDTO.setId(asistencia.getId());
+                            asistenciaDTO.setEstado(asistencia.getEstado());
+                            asistenciaDTO.setFecha(asistencia.getFecha());
+                            asistenciaDTO.setHora(asistencia.getFecha());
+                            asistenciaDTO.setMateriaSigla(programacion.getGrupo().getMateriaCarrera().getMateria().getSigla());
+                            asistenciaDTO.setGrupoName(programacion.getGrupo().getName());
+                            asistenciaDTO.setHoraInicio(programacion.getDiaHorario().getHorario().getHoraInicio());
+                            asistenciaDTO.setHoraFin(programacion.getDiaHorario().getHorario().getHoraFin());
+                            asistenciasDTO.add(asistenciaDTO);
+                        }
+                    }
+
+                }
+            }
+
+        }
+        asistenciasDTO.sort(Comparator.comparing(AsistenciasDTO::getFecha));
+        return asistenciasDTO;
+    }
+
+    public List<AsistenciasDTO> getAsistenciasByUserIdEstado(int carreraId, String estado) {
+        List<OurUsers> users = usersRepo.findAll();
+        List<AsistenciasDTO> asistenciasDTO = new ArrayList<>();
+        for (OurUsers user : users) {
+            List<Grupo> grupos = user.getGrupos().stream()
+                    .filter(grupo -> grupo.getMateriaCarrera().getCarrera().getId() == carreraId)
+                    .collect(Collectors.toList());
+            for (Grupo grupo : grupos) {
+                List<Programacion_Academica> programaciones = grupo.getProgramacionAcademicas();
+                for (Programacion_Academica programacion : programaciones) {
+                    List<Asistencia> asistencias = programacion.getAsistencias();
+                    for (Asistencia asistencia : asistencias) {
+                        LocalDateTime fechaAsistencia = asistencia.getFecha();
+                        if (asistencia.getEstado().equals(estado) && fechaAsistencia.isBefore(LocalDateTime.now())) {
+                            asistencia.setProgramacionAcademica(null);
+                            AsistenciasDTO asistenciaDTO = new AsistenciasDTO();
+                            asistenciaDTO.setNombre(programacion.getGrupo().getDocente().getName());
+                            asistenciaDTO.setId(asistencia.getId());
+                            asistenciaDTO.setEstado(asistencia.getEstado());
+                            asistenciaDTO.setFecha(asistencia.getFecha());
+                            asistenciaDTO.setHora(asistencia.getFecha());
+                            asistenciaDTO.setMateriaSigla(programacion.getGrupo().getMateriaCarrera().getMateria().getSigla());
+                            asistenciaDTO.setGrupoName(programacion.getGrupo().getName());
+                            asistenciaDTO.setHoraInicio(programacion.getDiaHorario().getHorario().getHoraInicio());
+                            asistenciaDTO.setHoraFin(programacion.getDiaHorario().getHorario().getHoraFin());
+                            asistenciasDTO.add(asistenciaDTO);
+                        }
+                    }
+                }
+            }
+
+        }
+        asistenciasDTO.sort(Comparator.comparing(AsistenciasDTO::getFecha));
+        return asistenciasDTO;
     }
 }

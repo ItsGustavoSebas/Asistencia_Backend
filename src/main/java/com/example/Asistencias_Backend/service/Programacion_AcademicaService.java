@@ -133,34 +133,53 @@ public class Programacion_AcademicaService {
         return distanciaMetros;
     }
 
-    public ReqRes solicitarLicencia(int programacionAcademicaId, LocalDate fechaInicio, LocalDate fechaFin, String motivo) {
+    public ReqRes solicitarLicencia(int docenteId, LocalDate fechaInicio, LocalDate fechaFin, String motivo) {
         ReqRes resp = new ReqRes();
-        try{
-        Programacion_Academica programacionAcademica = programacion_AcademicaRepo.findById(programacionAcademicaId)
-                .orElseThrow(() -> new RuntimeException("Programacion Academica no encontrada"));
-        Licencia licencia = new Licencia();
-        licencia.setFechaInicio(fechaInicio);
-        licencia.setFechaFin(fechaFin);
-        licencia.setMotivo(motivo);
-        licencia.setProgramacionAcademica(programacionAcademica);
-        long daysBetween = ChronoUnit.DAYS.between(fechaInicio, fechaFin) + 1;
-        if (daysBetween <= 3) {
-            licencia.setAprobado(true);
-        } else {
-            licencia.setAprobado(null);
-        }
-        Licencia licenciaResult = licenciaRepo.save(licencia);
-        if (licenciaResult.getId() > 0) {
-            resp.setLicencia(licenciaResult);
-            resp.setMessage("Modulo Saved Successfully");
-            resp.setStatusCode(200);
-        }
+        try {
+            OurUsers ourUsers = usersRepo.findById(docenteId)
+                    .orElseThrow(() -> new RuntimeException("Docente no encontrado"));
+
+            // Crear y guardar la nueva licencia
+            Licencia licencia = new Licencia();
+            licencia.setFechaInicio(fechaInicio);
+            licencia.setFechaFin(fechaFin);
+            licencia.setMotivo(motivo);
+            licencia.setOurUsers(ourUsers);
+            long daysBetween = ChronoUnit.DAYS.between(fechaInicio, fechaFin) + 1;
+            if (daysBetween <= 3) {
+                licencia.setAprobado(true);
+            } else {
+                licencia.setAprobado(null);
+            }
+            Licencia licenciaResult = licenciaRepo.save(licencia);
+            List<Grupo> grupos = ourUsers.getGrupos();
+            for (Grupo grupo : grupos) {
+                List<Programacion_Academica> programaciones = grupo.getProgramacionAcademicas();
+                for (Programacion_Academica programacion : programaciones) {
+                    List<Asistencia> asistencias = programacion.getAsistencias();
+                    for (Asistencia asistencia : asistencias) {
+                        LocalDate fechaAsistencia = asistencia.getFecha().toLocalDate();
+                        if ((fechaAsistencia.isEqual(fechaInicio) || fechaAsistencia.isAfter(fechaInicio)) &&
+                                (fechaAsistencia.isEqual(fechaFin) || fechaAsistencia.isBefore(fechaFin)) &&
+                                !"Presente".equals(asistencia.getEstado())) {
+                            asistencia.setEstado("Licencia");
+                            asistenciaRepo.save(asistencia);
+                        }
+                    }
+                }
+            }
+            if (licenciaResult.getId() > 0) {
+                resp.setLicencia(licenciaResult);
+                resp.setMessage("Licencia Saved Successfully");
+                resp.setStatusCode(200);
+            }
         } catch (Exception e) {
             resp.setStatusCode(500);
             resp.setError(e.getMessage());
         }
-            return resp;
+        return resp;
     }
+
 
     public ReqRes getAsistencias() {
         ReqRes reqRes = new ReqRes();

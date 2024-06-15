@@ -188,6 +188,8 @@ public class Programacion_AcademicaSeeder implements CommandLineRunner, Ordered 
                 programacion_AcademicaRepo.save(programacionAcademica);
             }
         }
+
+
     }
 
     static class ProgramacionData {

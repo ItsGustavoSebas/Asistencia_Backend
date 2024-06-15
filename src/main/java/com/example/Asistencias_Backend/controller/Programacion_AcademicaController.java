@@ -1,19 +1,18 @@
 package com.example.Asistencias_Backend.controller;
 
-import com.example.Asistencias_Backend.dto.AsistenciaDTO;
-import com.example.Asistencias_Backend.dto.ReqRes;
-import com.example.Asistencias_Backend.entity.Asistencia;
+import com.example.Asistencias_Backend.dto.*;
 import com.example.Asistencias_Backend.service.AsistenciaService;
 import com.example.Asistencias_Backend.service.Programacion_AcademicaService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.format.annotation.DateTimeFormat;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
+import java.util.Date;
+import java.text.DateFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 
 @RestController
 @RequestMapping("/adminuser/programacion")
@@ -50,14 +49,97 @@ public class Programacion_AcademicaController {
     }
 
     @GetMapping("/asistencias")
-    public ResponseEntity<ReqRes> getAsistencias() {
-        ReqRes asistencias = programacionAcademicaService.getAsistencias();
+    public ResponseEntity<List<AsistenciaDTO>> getAsistencias() {
+        List<AsistenciaDTO> asistencias = asistenciaService.getAsistencias();
         return ResponseEntity.ok(asistencias);
     }
 
     @GetMapping("/asistencias/{user_id}")
     public ResponseEntity<List<AsistenciaDTO>> getAsistencias(@PathVariable int user_id) {
         List<AsistenciaDTO> asistencias = asistenciaService.getAsistenciasByUserId(user_id);
+        return ResponseEntity.ok(asistencias);
+    }
+
+    @GetMapping("/asistencias/web/{user_id}")
+    public ResponseEntity<List<AsistenciasDTO>> getAsistenciasA(@PathVariable int user_id) {
+        List<AsistenciasDTO> asistencias = asistenciaService.getAsistenciasByUserIdWeb(user_id);
+        return ResponseEntity.ok(asistencias);
+    }
+
+    @GetMapping("/asistencias/{user_id}/{estado}")
+    public ResponseEntity<List<AsistenciasDTO>> getAsistencias(@PathVariable int user_id, @PathVariable String estado) {
+        List<AsistenciasDTO> asistencias = asistenciaService.getAsistenciasByUserIdEstado(user_id, estado);
+        return ResponseEntity.ok(asistencias);
+    }
+
+    @GetMapping("/asistencias/users")
+    public ResponseEntity<List<AsistenciaUsuarioDTO>> getAsistenciasUsers() {
+        List<AsistenciaUsuarioDTO> asistencias = asistenciaService.getAllUsersAsistencias();
+        return ResponseEntity.ok(asistencias);
+    }
+
+    @GetMapping("/asistencias/estados")
+    public ResponseEntity<List<UsuarioEstadoAsistenciasDTO>> getAsistenciasEstados() {
+        List<UsuarioEstadoAsistenciasDTO> asistencias = asistenciaService.getAllUsersEstadoAsistencias();
+        return ResponseEntity.ok(asistencias);
+    }
+    private final DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+    @GetMapping("/asistencias/users/{startDate}/{endDate}")
+    public ResponseEntity<List<AsistenciaUsuarioDTO>> getAsistenciasUsersDate(@PathVariable String startDate,
+                                                                              @PathVariable String endDate) throws ParseException {
+        Date parsedStartDate = dateFormat.parse(startDate);
+        Date parsedEndDate = dateFormat.parse(endDate);
+        List<AsistenciaUsuarioDTO> asistencias = asistenciaService.getAllUsersAsistenciasDate(parsedStartDate, parsedEndDate);
+        return ResponseEntity.ok(asistencias);
+    }
+
+    @GetMapping("/asistencias/estados/{startDate}/{endDate}")
+    public ResponseEntity<List<UsuarioEstadoAsistenciasDTO>> getAsistenciasEstadosDate(@PathVariable String startDate,
+                                                                                       @PathVariable String endDate) throws ParseException {
+        Date parsedStartDate = dateFormat.parse(startDate);
+        Date parsedEndDate = dateFormat.parse(endDate);
+        List<UsuarioEstadoAsistenciasDTO> asistencias = asistenciaService.getAllUsersEstadoAsistenciasDate(parsedStartDate, parsedEndDate);
+        return ResponseEntity.ok(asistencias);
+    }
+
+    @GetMapping("/asistencias/name/estados/{startDate}/{endDate}")
+    public ResponseEntity<List<UsuarioEstadoAsistenciasDTO>> getAsistenciasEstadosNameDate(@PathVariable String startDate,
+                                                                                       @PathVariable String endDate, @RequestParam String name) throws ParseException {
+        Date parsedStartDate = dateFormat.parse(startDate);
+        Date parsedEndDate = dateFormat.parse(endDate);
+        List<UsuarioEstadoAsistenciasDTO> asistencias = asistenciaService.getAllUsersEstadoAsistenciasNameDate(name, parsedStartDate, parsedEndDate);
+        return ResponseEntity.ok(asistencias);
+    }
+
+    @GetMapping("/asistencias/name/estados")
+    public ResponseEntity<List<UsuarioEstadoAsistenciasDTO>> getAsistenciasEstadosNameDate(@RequestParam String name) {
+        List<UsuarioEstadoAsistenciasDTO> asistencias = asistenciaService.getAllUsersEstadoAsistenciasName(name);
+        return ResponseEntity.ok(asistencias);
+    }
+
+    @GetMapping("/asistencias/web/{user_id}/{startDate}/{endDate}")
+    public ResponseEntity<List<AsistenciasDTO>> getAsistenciasDate(@PathVariable int user_id,
+                                                                  @PathVariable String startDate,
+                                                                  @PathVariable String endDate) throws ParseException {
+        Date parsedStartDate = dateFormat.parse(startDate);
+        Date parsedEndDate = dateFormat.parse(endDate);
+        List<AsistenciasDTO> asistencias = asistenciaService.getAsistenciasByUserIdDate(user_id, parsedStartDate, parsedEndDate);
+        return ResponseEntity.ok(asistencias);
+    }
+
+
+
+    @GetMapping("/asistencias/{user_id}/{estado}/{startDate}/{endDate}")
+    public ResponseEntity<List<AsistenciasDTO>> getAsistenciasDate(
+            @PathVariable int user_id,
+            @PathVariable String estado,
+            @PathVariable String startDate,
+            @PathVariable String endDate) throws ParseException {
+
+        Date parsedStartDate = dateFormat.parse(startDate);
+        Date parsedEndDate = dateFormat.parse(endDate);
+
+        List<AsistenciasDTO> asistencias = asistenciaService.getAsistenciasByUserIdEstadoDate(user_id, estado, parsedStartDate, parsedEndDate);
         return ResponseEntity.ok(asistencias);
     }
 

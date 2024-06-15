@@ -28,6 +28,4 @@ public class Programacion_Academica {
     @OneToMany(mappedBy = "programacionAcademica", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Asistencia> asistencias;
 
-    @OneToMany(mappedBy = "programacionAcademica", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Licencia> licencias;
 }

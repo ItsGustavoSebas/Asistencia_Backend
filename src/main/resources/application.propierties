@@ -1,9 +1,10 @@
 spring.jpa.database=POSTGRESQL
 spring.application.name=Asistencias_Backend
 spring.datasource.url=jdbc:postgresql://localhost:5432/asistencia
-spring.datasource.username=
-spring.datasource.password=
+spring.datasource.username=postgres
+spring.datasource.password=12345678
 spring.jpa.show-sql=true
 spring.jpa.generate-ddl=true
-spring.jpa.hibernate.ddl-auto=update
+spring.jpa.hibernate.ddl-auto=create
 spring.jpa.properties.hibernate.jdbc.lob.non_contextual_creation=true
+spring.jackson.time-zone=America/La_Paz
