@@ -1,6 +1,6 @@
 package com.example.Asistencias_Backend.service;
 
-import com.example.Asistencias_Backend.dto.ReqRes;
+import com.example.Asistencias_Backend.dto.*;
 import com.example.Asistencias_Backend.entity.*;
 import com.example.Asistencias_Backend.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,6 +10,8 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -26,6 +28,22 @@ public class Programacion_AcademicaService {
     private AsistenciaRepo asistenciaRepo;
     @Autowired
     private LicenciaRepo licenciaRepo;
+    @Autowired
+    private Materia_CarreraRepo materia_CarreraRepo;
+    @Autowired
+    private Facultad_GestionRepo facultad_GestionRepo;
+    @Autowired
+    private ModuloRepo moduloRepo;
+    @Autowired
+    private Dia_HorarioRepo dia_HorarioRepo;
+    @Autowired
+    private DiaRepo diaRepo;
+    @Autowired
+    private HorarioRepo horarioRepo;
+    @Autowired
+    private CarreraRepo carreraRepo;
+    @Autowired
+    private FacultadRepo facultadRepo;
 
     public ReqRes getProgramacion() {
         ReqRes reqRes = new ReqRes();
@@ -46,6 +64,237 @@ public class Programacion_AcademicaService {
             return reqRes;
         }
     }
+
+    public List<GrupoDTO> getGrupos() {
+        List<GrupoDTO> grupoDTOS = new ArrayList<>();
+        List<Grupo> grupos = grupoRepo.findAll();
+
+        for (Grupo grupo : grupos) {
+            GrupoDTO grupoDTO = new GrupoDTO();
+            grupoDTO.setGrupoId(grupo.getId());
+            grupoDTO.setNombre(grupo.getName());
+            grupoDTO.setDocente(grupo.getDocente().getName());
+            grupoDTO.setSemestre(grupo.getMateriaCarrera().getSemestre());
+            grupoDTO.setSiglas(grupo.getMateriaCarrera().getMateria().getSigla());
+            grupoDTO.setMateria(grupo.getMateriaCarrera().getMateria().getName());
+            grupoDTO.setMateria_carreraId(grupo.getMateriaCarrera().getId());
+
+            List<Dia_HorarioDTO> diaHorarioDTOS = new ArrayList<>();
+            List<Programacion_Academica> programacionAcademicas = grupo.getProgramacionAcademicas();
+            for (Programacion_Academica programacionAcademica : programacionAcademicas) {
+                Dia_HorarioDTO diaHorarioDTO = new Dia_HorarioDTO();
+                diaHorarioDTO.setDia(programacionAcademica.getDiaHorario().getDia().getName());
+                diaHorarioDTO.setHoraInicio(programacionAcademica.getDiaHorario().getHorario().getHoraInicio());
+                diaHorarioDTO.setHoraFin(programacionAcademica.getDiaHorario().getHorario().getHoraFin());
+                diaHorarioDTO.setModulo(programacionAcademica.getModulo().getName());
+                diaHorarioDTO.setAula(programacionAcademica.getAula());
+                diaHorarioDTOS.add(diaHorarioDTO);
+            }
+            grupoDTO.setDiaHorarioDTOS(diaHorarioDTOS);
+            grupoDTOS.add(grupoDTO);
+        }
+        grupoDTOS.sort(Comparator.comparing(GrupoDTO::getSemestre)
+                .thenComparing(GrupoDTO::getSiglas)
+                .thenComparing(GrupoDTO::getDocente));
+        return grupoDTOS;
+    }
+
+    public ReqRes getCarrera_Materias(int carreraId) {
+        ReqRes reqRes = new ReqRes();
+        try {
+            Carrera carrera = carreraRepo.findById(carreraId).orElseThrow(() -> new RuntimeException("Carrera Not found"));
+            List<Materia_Carrera> result = carrera.getMateriasCarreras();
+            if (!result.isEmpty()) {
+                reqRes.setMateriaCarreras(result);
+                reqRes.setStatusCode(200);
+                reqRes.setMessage("Successful");
+            } else {
+                reqRes.setStatusCode(404);
+                reqRes.setMessage("No materia found");
+            }
+            return reqRes;
+        } catch (Exception e) {
+            reqRes.setStatusCode(500);
+            reqRes.setMessage("Error occurred: " + e.getMessage());
+            return reqRes;
+        }
+    }
+
+    public ReqRes getCarreras(int facultadId) {
+        ReqRes reqRes = new ReqRes();
+        try {
+            Facultad facultad = facultadRepo.findById(facultadId).orElseThrow(() -> new RuntimeException("Carrera Not found"));
+            List<Carrera> result = facultad.getCarreras();
+            if (!result.isEmpty()) {
+                reqRes.setCarreraList(result);
+                reqRes.setStatusCode(200);
+                reqRes.setMessage("Successful");
+            } else {
+                reqRes.setStatusCode(404);
+                reqRes.setMessage("No carrera found");
+            }
+            return reqRes;
+        } catch (Exception e) {
+            reqRes.setStatusCode(500);
+            reqRes.setMessage("Error occurred: " + e.getMessage());
+            return reqRes;
+        }
+    }
+
+    public ReqRes getModulos(int facultadId) {
+        ReqRes reqRes = new ReqRes();
+        try {
+            Facultad facultad = facultadRepo.findById(facultadId).orElseThrow(() -> new RuntimeException("Carrera Not found"));
+            List<Modulo> result = facultad.getModulos();
+            if (!result.isEmpty()) {
+                reqRes.setModuloList(result);
+                reqRes.setStatusCode(200);
+                reqRes.setMessage("Successful");
+            } else {
+                reqRes.setStatusCode(404);
+                reqRes.setMessage("No carrera found");
+            }
+            return reqRes;
+        } catch (Exception e) {
+            reqRes.setStatusCode(500);
+            reqRes.setMessage("Error occurred: " + e.getMessage());
+            return reqRes;
+        }
+    }
+
+    public ReqRes getFacultad(int facultadId) {
+        ReqRes reqRes = new ReqRes();
+        try {
+            Facultad_Gestion facultadGestion = facultad_GestionRepo.findById(facultadId).orElseThrow(() -> new RuntimeException("Carrera Not found"));
+            Facultad result = facultadGestion.getFacultad();
+            if (!result.getFacultadGestions().isEmpty()) {
+                reqRes.setFacultad(result);
+                reqRes.setStatusCode(200);
+                reqRes.setMessage("Successful");
+            } else {
+                reqRes.setStatusCode(404);
+                reqRes.setMessage("No carrera found");
+            }
+            return reqRes;
+        } catch (Exception e) {
+            reqRes.setStatusCode(500);
+            reqRes.setMessage("Error occurred: " + e.getMessage());
+            return reqRes;
+        }
+    }
+
+    public List<GrupoDTO> getGruposFacultad(int facultadId) {
+        List<GrupoDTO> grupoDTOS = new ArrayList<>();
+        List<Grupo> grupos = grupoRepo.findAll();
+        for (Grupo grupo : grupos) {
+            if (grupo.getFacultadGestion().getId() == facultadId) {
+                GrupoDTO grupoDTO = new GrupoDTO();
+                grupoDTO.setGrupoId(grupo.getId());
+                grupoDTO.setNombre(grupo.getName());
+                grupoDTO.setDocente(grupo.getDocente().getName());
+                grupoDTO.setSemestre(grupo.getMateriaCarrera().getSemestre());
+                grupoDTO.setSiglas(grupo.getMateriaCarrera().getMateria().getSigla());
+                grupoDTO.setMateria(grupo.getMateriaCarrera().getMateria().getName());
+                grupoDTO.setMateria_carreraId(grupo.getMateriaCarrera().getId());
+                List<Dia_HorarioDTO> diaHorarioDTOS = new ArrayList<>();
+                List<Programacion_Academica> programacionAcademicas = grupo.getProgramacionAcademicas();
+                for (Programacion_Academica programacionAcademica : programacionAcademicas) {
+                    Dia_HorarioDTO diaHorarioDTO = new Dia_HorarioDTO();
+                    diaHorarioDTO.setDia(programacionAcademica.getDiaHorario().getDia().getName());
+                    diaHorarioDTO.setHoraInicio(programacionAcademica.getDiaHorario().getHorario().getHoraInicio());
+                    diaHorarioDTO.setHoraFin(programacionAcademica.getDiaHorario().getHorario().getHoraFin());
+                    diaHorarioDTO.setModulo(programacionAcademica.getModulo().getName());
+                    diaHorarioDTO.setAula(programacionAcademica.getAula());
+                    diaHorarioDTOS.add(diaHorarioDTO);
+                }
+                grupoDTO.setDiaHorarioDTOS(diaHorarioDTOS);
+                grupoDTOS.add(grupoDTO);
+            }
+        }
+        grupoDTOS.sort(Comparator.comparing(GrupoDTO::getSemestre)
+                .thenComparing(GrupoDTO::getSiglas)
+                .thenComparing(GrupoDTO::getDocente));
+        return grupoDTOS;
+    }
+
+    public ReqRes createGrupo(newGrupoDTO registrationRequest){
+        ReqRes resp = new ReqRes();
+
+        try {
+            // Crear y asignar los datos básicos del grupo
+            Grupo grupo = new Grupo();
+            grupo.setName(registrationRequest.getNombre());
+
+            // Obtener y asignar el docente, materia y facultad gestión
+            OurUsers docente = usersRepo.findById(registrationRequest.getDocenteId()).orElseThrow(() -> new RuntimeException("User Not found"));
+            Materia_Carrera materiaCarrera = materia_CarreraRepo.findById(registrationRequest.getMateria_carreraId()).orElseThrow(() -> new RuntimeException("Materia Carrera Not found"));
+            Facultad_Gestion facultadGestion = facultad_GestionRepo.findById(registrationRequest.getFacultad_gestionId()).orElseThrow(() -> new RuntimeException("Facultad Gestion Not found"));
+
+            grupo.setDocente(docente);
+            grupo.setMateriaCarrera(materiaCarrera);
+            grupo.setFacultadGestion(facultadGestion);
+
+            // Guardar el grupo inicial
+            Grupo grupoResult = grupoRepo.save(grupo);
+
+            // Crear y asignar las programaciones académicas
+            List<Programacion_Academica> programacionAcademicaList = new ArrayList<>();
+            for (Dia_HorarioDTO diaHorarioDTO : registrationRequest.getDiaHorarioDTOS()) {
+                Programacion_Academica programacionAcademica = new Programacion_Academica();
+                programacionAcademica.setAula(diaHorarioDTO.getAula());
+
+                // Obtener y asignar el módulo
+                Modulo modulo = moduloRepo.findById(diaHorarioDTO.getModuloId()).orElseThrow(() -> new RuntimeException("Modulo Not found"));
+                programacionAcademica.setModulo(modulo);
+
+                // Obtener o crear el Dia_Horario
+                Dia_Horario diaHorario = dia_HorarioRepo.findByDia_NameAndHorario_HoraInicioAndHorario_HoraFin(
+                        diaHorarioDTO.getDia(),
+                        diaHorarioDTO.getHoraInicio(),
+                        diaHorarioDTO.getHoraFin()
+                );
+
+                if (diaHorario == null) {
+                    Horario horario = new Horario();
+                    horario.setHoraInicio(diaHorarioDTO.getHoraInicio());
+                    horario.setHoraFin(diaHorarioDTO.getHoraFin());
+                    Horario newHorario = horarioRepo.save(horario);
+
+                    Dia dia = diaRepo.findByName(diaHorarioDTO.getDia());
+                    Dia_Horario newDiaHorario = new Dia_Horario();
+                    newDiaHorario.setHorario(newHorario);
+                    newDiaHorario.setDia(dia);
+                    diaHorario = dia_HorarioRepo.save(newDiaHorario);
+                }
+
+                programacionAcademica.setDiaHorario(diaHorario);
+                programacionAcademica.setGrupo(grupoResult);
+
+                // Guardar cada programación académica
+                Programacion_Academica newProgramacion = programacion_AcademicaRepo.save(programacionAcademica);
+                programacionAcademicaList.add(newProgramacion);
+            }
+
+            // Asignar la lista de programaciones académicas al grupo y guardar el grupo final
+            grupoResult.setProgramacionAcademicas(programacionAcademicaList);
+            Grupo finalGrupoResult = grupoRepo.save(grupoResult);
+
+            // Verificar si se guardó correctamente
+            if (finalGrupoResult.getId() > 0) {
+                resp.setGrupo(finalGrupoResult);
+                resp.setMessage("Grupo Saved Successfully");
+                resp.setStatusCode(200);
+            }
+
+        } catch (Exception e) {
+            resp.setStatusCode(500);
+            resp.setError(e.getMessage());
+        }
+
+        return resp;
+    }
+
+
 
     public ReqRes getProgramacionesAcademicasByUsuario(int usuarioId) {
         ReqRes reqRes = new ReqRes();
@@ -152,18 +401,20 @@ public class Programacion_AcademicaService {
                 licencia.setAprobado(null);
             }
             Licencia licenciaResult = licenciaRepo.save(licencia);
-            List<Grupo> grupos = ourUsers.getGrupos();
-            for (Grupo grupo : grupos) {
-                List<Programacion_Academica> programaciones = grupo.getProgramacionAcademicas();
-                for (Programacion_Academica programacion : programaciones) {
-                    List<Asistencia> asistencias = programacion.getAsistencias();
-                    for (Asistencia asistencia : asistencias) {
-                        LocalDate fechaAsistencia = asistencia.getFecha().toLocalDate();
-                        if ((fechaAsistencia.isEqual(fechaInicio) || fechaAsistencia.isAfter(fechaInicio)) &&
-                                (fechaAsistencia.isEqual(fechaFin) || fechaAsistencia.isBefore(fechaFin)) &&
-                                !"Presente".equals(asistencia.getEstado())) {
-                            asistencia.setEstado("Licencia");
-                            asistenciaRepo.save(asistencia);
+            if(licenciaResult.getAprobado()) {
+                List<Grupo> grupos = ourUsers.getGrupos();
+                for (Grupo grupo : grupos) {
+                    List<Programacion_Academica> programaciones = grupo.getProgramacionAcademicas();
+                    for (Programacion_Academica programacion : programaciones) {
+                        List<Asistencia> asistencias = programacion.getAsistencias();
+                        for (Asistencia asistencia : asistencias) {
+                            LocalDate fechaAsistencia = asistencia.getFecha().toLocalDate();
+                            if ((fechaAsistencia.isEqual(fechaInicio) || fechaAsistencia.isAfter(fechaInicio)) &&
+                                    (fechaAsistencia.isEqual(fechaFin) || fechaAsistencia.isBefore(fechaFin)) &&
+                                    !"Presente".equals(asistencia.getEstado())) {
+                                asistencia.setEstado("Licencia");
+                                asistenciaRepo.save(asistencia);
+                            }
                         }
                     }
                 }

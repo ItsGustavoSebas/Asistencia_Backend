@@ -13,8 +13,10 @@ import java.util.List;
 @RestController
 @RequestMapping("/admin/licencias")
 public class LicenciaController {
+
     @Autowired
     private LicenciaService licenciaService;
+
     @GetMapping("")
     public ResponseEntity<List<LicenciaDTO>> getLicencias() {
         List<LicenciaDTO> licencias = licenciaService.getLicencias();

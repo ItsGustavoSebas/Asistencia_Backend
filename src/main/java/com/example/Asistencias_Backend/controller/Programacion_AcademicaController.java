@@ -1,6 +1,7 @@
 package com.example.Asistencias_Backend.controller;
 
 import com.example.Asistencias_Backend.dto.*;
+import com.example.Asistencias_Backend.entity.Carrera;
 import com.example.Asistencias_Backend.service.AsistenciaService;
 import com.example.Asistencias_Backend.service.Programacion_AcademicaService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,6 +28,48 @@ public class Programacion_AcademicaController {
     public ResponseEntity<ReqRes> getProgramacion() {
         ReqRes programacion = programacionAcademicaService.getProgramacion();
         return ResponseEntity.ok(programacion);
+    }
+
+    @PostMapping("/crear")
+    public ResponseEntity<ReqRes> createProgramacion(@RequestBody newGrupoDTO grupoDto) {
+        ReqRes programacion = programacionAcademicaService.createGrupo(grupoDto);
+        return ResponseEntity.ok(programacion);
+    }
+
+    @GetMapping("/facultadGestion/{id}")
+    public ResponseEntity<ReqRes> getFacultad(@PathVariable int id) {
+        ReqRes programacion = programacionAcademicaService.getFacultad(id);
+        return ResponseEntity.ok(programacion);
+    }
+
+    @GetMapping("/grupos")
+    public ResponseEntity<List<GrupoDTO>> getGrupos() {
+        List<GrupoDTO> grupos = programacionAcademicaService.getGrupos();
+        return ResponseEntity.ok(grupos);
+    }
+
+    @GetMapping("/grupos/{facultadId}")
+    public ResponseEntity<List<GrupoDTO>> getGruposFac(@PathVariable int facultadId) {
+        List<GrupoDTO> grupos = programacionAcademicaService.getGruposFacultad(facultadId);
+        return ResponseEntity.ok(grupos);
+    }
+
+    @GetMapping("/carreras/{facultadId}")
+    public ResponseEntity<ReqRes> getCarrerasFac(@PathVariable int facultadId) {
+        ReqRes carreras = programacionAcademicaService.getCarreras(facultadId);
+        return ResponseEntity.ok(carreras);
+    }
+
+    @GetMapping("/modulos/{facultadId}")
+    public ResponseEntity<ReqRes> getModulosFac(@PathVariable int facultadId) {
+        ReqRes res = programacionAcademicaService.getModulos(facultadId);
+        return ResponseEntity.ok(res);
+    }
+
+    @GetMapping("/carreras/materias/{carreraId}")
+    public ResponseEntity<ReqRes> getMaterias_CarrerasFac(@PathVariable int carreraId) {
+        ReqRes res = programacionAcademicaService.getCarrera_Materias(carreraId);
+        return ResponseEntity.ok(res);
     }
 
     @GetMapping("/{user_id}")

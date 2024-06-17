@@ -3,6 +3,7 @@ package com.example.Asistencias_Backend.service;
 import com.example.Asistencias_Backend.dto.LicenciaDTO;
 import com.example.Asistencias_Backend.dto.ReqRes;
 import com.example.Asistencias_Backend.entity.*;
+import com.example.Asistencias_Backend.repository.AsistenciaRepo;
 import com.example.Asistencias_Backend.repository.LicenciaRepo;
 import com.example.Asistencias_Backend.repository.UsersRepo;
 import jakarta.transaction.Transactional;
@@ -22,6 +23,9 @@ public class LicenciaService {
     @Autowired
     private UsersRepo usersRepo;
 
+    @Autowired
+    private AsistenciaRepo asistenciaRepo;
+
     public List<LicenciaDTO> getLicencias() {
         List<OurUsers> users = usersRepo.findAll();
         List<LicenciaDTO> licenciasDTO = new ArrayList<>();
@@ -38,6 +42,24 @@ public class LicenciaService {
                 licenciasDTO.add(licenciaDTO);
             }
         }
+        licenciasDTO.sort(Comparator.comparing(LicenciaDTO::getFechaInicio));
+        return licenciasDTO;
+    }
+
+    public List<LicenciaDTO> getLicencia(int user_id) {
+        OurUsers user = usersRepo.findById(user_id).orElseThrow(() -> new RuntimeException("User Not found"));
+        List<LicenciaDTO> licenciasDTO = new ArrayList<>();
+            List<Licencia> licencias = user.getLicencias();
+            for (Licencia licencia : licencias) {
+                LicenciaDTO licenciaDTO = new LicenciaDTO();
+                licenciaDTO.setNombre(licencia.getOurUsers().getName());
+                licenciaDTO.setId(licencia.getId());
+                licenciaDTO.setMotivo(licencia.getMotivo());
+                licenciaDTO.setAprobado(licencia.getAprobado());
+                licenciaDTO.setFechaInicio(licencia.getFechaInicio());
+                licenciaDTO.setFechaFin(licencia.getFechaFin());
+                licenciasDTO.add(licenciaDTO);
+            }
         licenciasDTO.sort(Comparator.comparing(LicenciaDTO::getFechaInicio));
         return licenciasDTO;
     }
@@ -169,6 +191,24 @@ public class LicenciaService {
                 reqRes.setLicencia(saveLicencia);
                 reqRes.setStatusCode(200);
                 reqRes.setMessage("Licencia updated successfully");
+                if(saveLicencia.getAprobado()) {
+                    List<Grupo> grupos = saveLicencia.getOurUsers().getGrupos();
+                    for (Grupo grupo : grupos) {
+                        List<Programacion_Academica> programaciones = grupo.getProgramacionAcademicas();
+                        for (Programacion_Academica programacion : programaciones) {
+                            List<Asistencia> asistencias = programacion.getAsistencias();
+                            for (Asistencia asistencia : asistencias) {
+                                LocalDate fechaAsistencia = asistencia.getFecha().toLocalDate();
+                                if ((fechaAsistencia.isEqual(saveLicencia.getFechaInicio()) || fechaAsistencia.isAfter(saveLicencia.getFechaInicio())) &&
+                                        (fechaAsistencia.isEqual(saveLicencia.getFechaFin()) || fechaAsistencia.isBefore(saveLicencia.getFechaFin())) &&
+                                        !"Presente".equals(asistencia.getEstado())) {
+                                    asistencia.setEstado("Licencia");
+                                    asistenciaRepo.save(asistencia);
+                                }
+                            }
+                        }
+                    }
+                }
             } else {
                 reqRes.setStatusCode(404);
                 reqRes.setMessage("Licencia not found for update");

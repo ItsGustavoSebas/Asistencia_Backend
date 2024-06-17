@@ -44,6 +44,10 @@ public class GestionSeeder implements CommandLineRunner, Ordered {
         gestion1.setName("1-2024");
         gestionRepo.save(gestion1);
 
+        Gestion gestion3 = new Gestion();
+        gestion3.setName("3-2024");
+        gestionRepo.save(gestion3);
+
         Tipo tipo1 = new Tipo();
         tipo1.setName("inicio y final de clases");
         tipoRepo.save(tipo1);
@@ -64,6 +68,31 @@ public class GestionSeeder implements CommandLineRunner, Ordered {
         facultadGestion1.setFacultad(facultadRepo.findById(1).orElse(null));
         facultadGestion1.setGestion(gestion1);
         facultadGestionRepo.save(facultadGestion1);
+
+        Facultad_Gestion facultadGestion2 = new Facultad_Gestion();
+        facultadGestion2.setFacultad(facultadRepo.findById(1).orElse(null));
+        facultadGestion2.setGestion(gestion2);
+        facultadGestionRepo.save(facultadGestion2);
+
+        Facultad_Gestion facultadGestion3 = new Facultad_Gestion();
+        facultadGestion3.setFacultad(facultadRepo.findById(1).orElse(null));
+        facultadGestion3.setGestion(gestion3);
+        facultadGestionRepo.save(facultadGestion3);
+
+        Facultad_Gestion facultadGestion4 = new Facultad_Gestion();
+        facultadGestion4.setFacultad(facultadRepo.findById(2).orElse(null));
+        facultadGestion4.setGestion(gestion1);
+        facultadGestionRepo.save(facultadGestion4);
+
+        Facultad_Gestion facultadGestion5 = new Facultad_Gestion();
+        facultadGestion5.setFacultad(facultadRepo.findById(2).orElse(null));
+        facultadGestion5.setGestion(gestion2);
+        facultadGestionRepo.save(facultadGestion5);
+
+        Facultad_Gestion facultadGestion6 = new Facultad_Gestion();
+        facultadGestion6.setFacultad(facultadRepo.findById(2).orElse(null));
+        facultadGestion6.setGestion(gestion3);
+        facultadGestionRepo.save(facultadGestion6);
 
         FechaImportante fechaImportante1 = new FechaImportante();
         fechaImportante1.setFechaInicio(LocalDate.parse("04-03-2024",formatter));

@@ -65,7 +65,8 @@ public class Programacion_AcademicaSeeder implements CommandLineRunner, Ordered 
                 new ProgramacionData("MAT101", "H", "TEJERINA GUERRA JULIO",
                         Arrays.asList(
                                 new DiaHorarioData("Miercoles", "07:00", "09:15"),
-                                new DiaHorarioData("Viernes", "07:00", "09:15")
+                                new DiaHorarioData("Viernes", "07:00", "09:15"),
+                                new DiaHorarioData("Sabado", "08:30", "10:00")
                         )),
                 new ProgramacionData("MAT101", "SB", "JUSTINIANO VACA JUAN TOMAS",
                         Arrays.asList(
@@ -142,7 +143,8 @@ public class Programacion_AcademicaSeeder implements CommandLineRunner, Ordered 
                 new ProgramacionData("FIS102", "NF", "CALDERON FLORES MODESTO FRANKL",
                         Arrays.asList(
                                 new DiaHorarioData("Miercoles", "18:15", "20:30"),
-                                new DiaHorarioData("Viernes", "18:15", "20:30")
+                                new DiaHorarioData("Viernes", "18:15", "20:30"),
+                                new DiaHorarioData("Sabado", "18:15", "20:30")
                         )),
                 new ProgramacionData("FIS102", "NW", "ZEBALLOS PAREDES DANIEL LUIS",
                         Arrays.asList(
