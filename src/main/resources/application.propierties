@@ -7,7 +7,7 @@ spring.datasource.password=${DB_PASSWORD}
 spring.jpa.show-sql=true
 
 # Estrategia de actualización del esquema de Hibernate
-spring.jpa.hibernate.ddl-auto=update
+spring.jpa.hibernate.ddl-auto=create
 
 # Clase del controlador de la base de datos PostgreSQL
 spring.datasource.driver-class-name=org.postgresql.Driver
