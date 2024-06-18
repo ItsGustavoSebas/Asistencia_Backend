@@ -105,7 +105,7 @@ public class AsistenciaService {
         }
     }
 
-    public List<AsistenciaDTO> getAsistenciasByUserId(int userId) {
+     public List<AsistenciaDTO> getAsistenciasByUserId(int userId) {
         OurUsers user = usersRepo.findById(userId)
                 .orElseThrow(() -> new EntityNotFoundException("Usuario no encontrado"));
 
@@ -113,17 +113,22 @@ public class AsistenciaService {
 
         List<AsistenciaDTO> asistenciasDTO = new ArrayList<>();
 
+        LocalDateTime now = LocalDateTime.now();
+
         for (Grupo grupo : grupos) {
             List<Programacion_Academica> programaciones = grupo.getProgramacionAcademicas();
             for (Programacion_Academica programacion : programaciones) {
                 List<Asistencia> asistencias = programacion.getAsistencias();
                 for (Asistencia asistencia : asistencias) {
-                    asistencia.setProgramacionAcademica(null);
-                    AsistenciaDTO asistenciaDTO = new AsistenciaDTO(asistencia, programacion);
-                    asistenciasDTO.add(asistenciaDTO);
+                    if (asistencia.getFecha().isBefore(now)) {
+                        asistencia.setProgramacionAcademica(null);
+                        AsistenciaDTO asistenciaDTO = new AsistenciaDTO(asistencia, programacion);
+                        asistenciasDTO.add(asistenciaDTO);
+                    }
                 }
             }
         }
+
         asistenciasDTO.sort(Comparator.comparing(AsistenciaDTO::getFecha));
         return asistenciasDTO;
     }
